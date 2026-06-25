@@ -1184,9 +1184,18 @@
 
 <script>
   // ── HELPERS ──────────────────────────────────────────────────────────
-  function fmt12(dateStr) {
-    const d = new Date(dateStr);
-    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+function fmt12(dateStr) {
+    // NOAA returns local time as a string — parse manually
+    // to prevent JavaScript treating it as UTC
+    const [datePart, timePart] = dateStr.split(' ');
+    const [year, month, day] = datePart.split('-');
+    const [hour, minute] = timePart.split(':');
+    const d = new Date(year, month-1, day, hour, minute);
+    return d.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit', 
+      hour12: true 
+    });
   }
 
   function dayName(dateStr) {
