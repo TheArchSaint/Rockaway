@@ -15,7 +15,7 @@
       lat:         45.6157,
       lng:         -123.9390,
       noaaStation: "9437540",
-      weatherKey:  "d7761d6dd89a0418e24d0461437361f8",
+      weatherKey:  "YOUR_KEY_HERE",
     };
     // ══════════════════════════════════════════════
   </script>
@@ -924,9 +924,12 @@
 
 <!-- ══ TIDES ══════════════════════════════════════════════════════════ -->
 <section class="chapter" id="tides">
-  <div class="chapter-header">
-    <p class="chapter-number">03 &nbsp;—&nbsp; Tides & Sunrise</p>
-    <h2 class="chapter-title">The<br><em>rhythm<br>of the sea.</em></h2>
+  <div class="chapter-header" onclick="toggleChapter('tides')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">03 &nbsp;—&nbsp; Tides &amp; Sunrise</p>
+      <h2 class="chapter-title">The<br><em>rhythm<br>of the sea.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
   </div>
   <div class="chapter-body">
     <p class="chapter-intro">Plan your beach time around the tides. Low tide is the best moment to explore tide pools and walk the exposed shore.</p>
@@ -1184,18 +1187,19 @@
 
 <script>
   // ── HELPERS ──────────────────────────────────────────────────────────
-function fmt12(dateStr) {
-    // NOAA returns local time as a string — parse manually
-    // to prevent JavaScript treating it as UTC
+  // NOAA returns local time "YYYY-MM-DD HH:MM" — parse manually, no timezone shift
+  function fmt12noaa(dateStr) {
     const [datePart, timePart] = dateStr.split(' ');
     const [year, month, day] = datePart.split('-');
     const [hour, minute] = timePart.split(':');
     const d = new Date(year, month-1, day, hour, minute);
-    return d.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit', 
-      hour12: true 
-    });
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  }
+
+  // Sunrise-sunset API returns UTC ISO — let JS convert to local time
+  function fmt12utc(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   }
 
   function dayName(dateStr) {
@@ -1227,9 +1231,9 @@ function fmt12(dateStr) {
       const set    = new Date(data.results.sunset);
       const golden = new Date(set.getTime() - 30 * 60000); // 30 min before sunset
 
-      document.getElementById('sun-rise').textContent   = fmt12(rise);
-      document.getElementById('sun-set').textContent    = fmt12(set);
-      document.getElementById('sun-golden').textContent = fmt12(golden);
+      document.getElementById('sun-rise').textContent   = fmt12utc(rise);
+      document.getElementById('sun-set').textContent    = fmt12utc(set);
+      document.getElementById('sun-golden').textContent = fmt12utc(golden);
     } catch(e) {
       document.getElementById('sun-rise').textContent = 'Unavailable';
     }
@@ -1239,7 +1243,10 @@ function fmt12(dateStr) {
   async function loadTides() {
     try {
       const today = new Date();
-      const dateStr = today.toISOString().slice(0,10).replace(/-/g,'');
+      const y = today.getFullYear();
+      const mo = String(today.getMonth()+1).padStart(2,'0');
+      const dy = String(today.getDate()).padStart(2,'0');
+      const dateStr = `${y}${mo}${dy}`;
       const url = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter`
         + `?station=${PROPERTY.noaaStation}`
         + `&product=predictions&datum=MLLW&time_zone=lst_ldt`
@@ -1253,7 +1260,7 @@ function fmt12(dateStr) {
       const container = document.getElementById('tides-data');
       container.innerHTML = data.predictions.map(p => {
         const type = p.type === 'H' ? 'High tide' : 'Low tide';
-        const time = fmt12(p.t);
+        const time = fmt12noaa(p.t);
         const ht   = parseFloat(p.v).toFixed(1);
         return `<div class="data-row">
           <span class="data-key">${type}</span>
