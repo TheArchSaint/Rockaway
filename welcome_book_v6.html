@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Beach House — Guest Book</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script>
+    // ══════════════════════════════════════════════
+    // GLIDE PROPERTY CONFIG — fill these in
+    // ══════════════════════════════════════════════
+    const PROPERTY = {
+      name:        "The Beach House",
+      location:    "Rockaway, WA",
+      lat:         46.5,            // ← right click Google Maps → copy coordinates
+      lng:         -124.0,          // ← replace
+      noaaStation: "9440910",       // ← find yours: tidesandcurrents.noaa.gov/stations.html
+      weatherKey:  "YOUR_KEY_HERE", // ← free at openweathermap.org → API keys
+    };
+    // ══════════════════════════════════════════════
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:    #1a1a1a;
+      --navy:   #2b3a52;
+      --gold:   #c9a96e;
+      --sand:   #f5f0e8;
+      --warm:   #ede6d6;
+      --muted:  #8a8478;
+      --rule:   rgba(0,0,0,0.08);
+      --white:  #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--sand);
+      color: var(--ink);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── COVER ── */
+    .cover {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 52px 32px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
+    }
+
+    .cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(20, 30, 45, 0.45) 0%,
+        rgba(20, 30, 45, 0.15) 35%,
+        rgba(20, 30, 45, 0.55) 65%,
+        rgba(20, 30, 45, 0.88) 100%
+      );
+      z-index: 1;
+    }
+
+    .cover-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .cover-top,
+    .cover-body,
+    .cover-bottom { position: relative; z-index: 2; }
+
+    .glide-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .glide-mark svg {
+      width: 14px;
+      height: 14px;
+      stroke: rgba(255,255,255,0.4);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .cover-year {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      padding-top: 10px;
+    }
+
+    .cover-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 0 40px;
+    }
+
+    .cover-eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .cover-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 13vw, 72px);
+      font-weight: 300;
+      line-height: 1.0;
+      color: var(--white);
+      letter-spacing: -0.01em;
+    }
+
+    .cover-title em {
+      font-style: italic;
+      color: var(--gold);
+      display: block;
+    }
+
+    .cover-rule {
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.5;
+      margin: 32px 0 28px;
+    }
+
+    .cover-sub {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.5);
+      max-width: 280px;
+      letter-spacing: 0.02em;
+    }
+
+    .cover-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .cover-property {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      line-height: 1.6;
+    }
+
+    .scroll-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.2);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .scroll-hint svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      animation: bounce 2s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+
+    /* ── CHAPTER SYSTEM ── */
+    .chapter {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      border-top: 1px solid var(--rule);
+      overflow: hidden;
+    }
+
+    .chapter-header {
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+      gap: 16px;
+    }
+
+    .chapter-header:active { background: var(--warm); }
+
+    .chapter-header-left { flex: 1; }
+
+    .chapter-number {
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .chapter-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 6vw, 30px);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+
+    .chapter-title em { font-style: italic; }
+
+    .chapter-chevron {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.3s ease, background 0.2s;
+    }
+
+    .chapter-chevron svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--muted);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      transition: stroke 0.2s;
+    }
+
+    /* expanded state */
+    .chapter.open .chapter-chevron {
+      transform: rotate(180deg);
+      background: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .chapter.open .chapter-chevron svg { stroke: var(--gold); }
+
+    .chapter.open .chapter-header { border-bottom: 1px solid var(--rule); }
+
+    /* accordion body */
+    .chapter-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  padding 0.3s ease;
+      padding: 0 32px;
+    }
+
+    .chapter.open .chapter-body {
+      max-height: 2000px;
+      padding: 32px 32px 48px;
+    }
+
+    .chapter-intro {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--muted);
+      margin-bottom: 32px;
+      max-width: 340px;
+    }
+
+    /* ── DATA ROWS ── */
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--rule);
+      gap: 12px;
+    }
+
+    .data-row:first-child { padding-top: 0; }
+    .data-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .data-key {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .data-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--navy);
+      text-align: right;
+    }
+
+    .data-val small {
+      font-family: 'Jost', sans-serif;
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+
+    /* ── WIFI SPECIFIC ── */
+    .wifi-block {
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .wifi-item {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--warm);
+    }
+
+    .wifi-item:last-child { border-bottom: none; }
+
+    .wifi-label {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .wifi-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--navy);
+      letter-spacing: 0.02em;
+    }
+
+    .copy-btn {
+      display: inline-block;
+      margin-top: 10px;
+      background: var(--warm);
+      border: none;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--navy);
+      cursor: pointer;
+      font-family: 'Jost', sans-serif;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .copy-btn:active { background: #d8cebc; }
+
+    /* ── EXPLORE GRID ── */
+    .place-list { list-style: none; }
+
+    .place-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .place-item:last-child { border-bottom: none; }
+
+    .place-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--navy);
+    }
+
+    .place-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      letter-spacing: 0.02em;
+    }
+
+    .place-tag {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ── RULE LIST ── */
+    .rule-list { list-style: none; }
+
+    .rule-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--rule);
+      align-items: flex-start;
+    }
+
+    .rule-item:last-child { border-bottom: none; }
+
+    .rule-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: var(--gold);
+      opacity: 0.6;
+      flex-shrink: 0;
+      line-height: 1.3;
+    }
+
+    .rule-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #444;
+    }
+
+    /* ── EMERGENCY ── */
+    .emergency-block {
+      background: var(--navy);
+      border-radius: 12px;
+      padding: 24px 22px;
+      margin-bottom: 16px;
+    }
+
+    .emergency-label {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .emergency-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .emergency-detail {
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.04em;
+    }
+
+    .emergency-number {
+      font-size: 28px;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold);
+      margin-top: 10px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── FIREPLACE STEPS ── */
+    .step-list { list-style: none; }
+
+    .step-item {
+      display: flex;
+      gap: 20px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--rule);
+      align-items: flex-start;
+    }
+
+    .step-item:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      color: var(--gold);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-top: 1px;
+    }
+
+    .step-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #444;
+      padding-top: 4px;
+    }
+
+    .step-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    /* ── BACK TO TOP ── */
+    .back-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 20px 32px 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .back-top svg {
+      width: 12px;
+      height: 12px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* ── NAV ── */
+    .toc {
+      padding: 48px 32px;
+      background: var(--warm);
+      border-top: 1px solid var(--rule);
+    }
+
+    .toc-label {
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .toc-list { list-style: none; }
+
+    .toc-item {
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .toc-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      text-decoration: none;
+      color: var(--navy);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .toc-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    .toc-arrow {
+      font-size: 16px;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+
+    /* ── COLOPHON ── */
+    .colophon {
+      padding: 40px 32px 52px;
+      text-align: center;
+      border-top: 1px solid var(--rule);
+    }
+
+    .colophon-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .colophon-mark svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--muted);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .colophon-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      color: var(--navy);
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .colophon-sub {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    /* ── WEATHER ICON ROW ── */
+    .weather-condition {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .weather-temp {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 72px;
+      font-weight: 300;
+      color: var(--navy);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .weather-temp sup {
+      font-size: 28px;
+      vertical-align: super;
+      color: var(--gold);
+    }
+
+    .weather-feel {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      letter-spacing: 0.08em;
+    }
+
+    .forecast-row {
+      display: flex;
+      gap: 0;
+      margin-top: 32px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .forecast-day {
+      flex: 1;
+      padding: 16px 0;
+      text-align: center;
+      border-right: 1px solid var(--rule);
+    }
+
+    .forecast-day:last-child { border-right: none; }
+
+    .forecast-label {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .forecast-temp {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: var(--navy);
+    }
+
+    .forecast-icon { font-size: 16px; margin-bottom: 4px; }
+
+    /* ── FLOATING NAV ── */
+    .float-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(43, 58, 82, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 4px calc(8px + env(safe-area-inset-top));
+      padding-top: calc(8px + env(safe-area-inset-top));
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: rgba(255,255,255,0.4);
+      transition: color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    .nav-item:active,
+    .nav-item.active {
+      color: var(--gold);
+      background: rgba(201,169,110,0.12);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* push content below nav */
+    body { padding-top: 52px; }
+    .cover { padding-top: 72px; }
+
+    /* ── ANIMATIONS ── */
+    @media (prefers-reduced-motion: no-preference) {
+      .cover-eyebrow, .cover-title, .cover-rule, .cover-sub {
+        opacity: 0;
+        transform: translateY(10px);
+        animation: fadeUp 0.6s ease forwards;
+      }
+      .cover-eyebrow { animation-delay: 0.1s; }
+      .cover-title   { animation-delay: 0.2s; }
+      .cover-rule    { animation-delay: 0.35s; }
+      .cover-sub     { animation-delay: 0.42s; }
+
+      @keyframes fadeUp {
+        to { opacity: 1; transform: translateY(0); }
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ FLOATING NAV ══════════════════════════════════════════════════ -->
+<nav class="float-nav">
+
+  <!-- Home / Cover -->
+  <a href="#top" class="nav-item" title="Home">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  </a>
+
+  <!-- Wifi -->
+  <a href="#wifi" class="nav-item" title="Wifi">
+    <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
+  </a>
+
+  <!-- Weather -->
+  <a href="#weather" class="nav-item" title="Weather">
+    <svg viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+  </a>
+
+  <!-- Tides -->
+  <a href="#tides" class="nav-item" title="Tides">
+    <svg viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5s2.5 2 5 2 2.5-2 5-2"/><path d="M2 12c.6.5 1.2 1 2.5 1C7 13 7 11 9.5 11s2.5 2 5 2 2.5-2 5-2"/><path d="M2 18c.6.5 1.2 1 2.5 1C7 19 7 17 9.5 17s2.5 2 5 2 2.5-2 5-2"/></svg>
+  </a>
+
+  <!-- Eats -->
+  <a href="#eats" class="nav-item" title="Eats">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="18" y2="20"/><path d="M6 6v4a4 4 0 0 0 4 4v6"/><line x1="6" y1="6" x2="10" y2="6"/><line x1="6" y1="10" x2="10" y2="10"/></svg>
+  </a>
+
+  <!-- Explore -->
+  <a href="#explore" class="nav-item" title="Explore">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+  </a>
+
+  <!-- Beaches -->
+  <a href="#beaches" class="nav-item" title="Beaches">
+    <svg viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>
+  </a>
+
+  <!-- Fireplace -->
+  <a href="#fireplace" class="nav-item" title="Fireplace">
+    <svg viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-2.69 10-6-3 0-5-1-5-4 0-2-2-4-5-4S7 10 7 12c0 3-2 4-5 4 0 3.31 4.48 6 10 6z"/><path d="M12 22V12"/></svg>
+  </a>
+
+  <!-- Rules -->
+  <a href="#rules" class="nav-item" title="Rules">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+  </a>
+
+  <!-- Emergency -->
+  <a href="#emergency" class="nav-item" title="Emergency">
+    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  </a>
+
+  <!-- Checkout -->
+  <a href="#checkout" class="nav-item" title="Checkout">
+    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+  </a>
+
+</nav>
+
+<!-- ══ COVER ══════════════════════════════════════════════════════════ -->
+<section class="cover" id="top">
+  <img class="cover-photo" src="https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTQ4MDEwOTM3NDMwNjMwMjg3Nw==/original/833ab0a9-048b-4648-99be-a4f8eda100fc.jpeg" alt="The Beach House" />
+  <div class="cover-overlay"></div>
+  <div class="cover-top">
+    <div class="glide-mark">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
+    </div>
+    <span class="cover-year">2025</span>
+  </div>
+
+  <div class="cover-body">
+    <p class="cover-eyebrow">Guest Book</p>
+    <h1 class="cover-title">Beachfront<br><em>Rockaway.</em></h1>
+    <div class="cover-rule"></div>
+    <p class="cover-sub">Seven miles of uncrowded shoreline, right outside your door.</p>
+  </div>
+
+  <div class="cover-bottom">
+    <p class="cover-property">Rockaway Beach, OR<br>Glide Property</p>
+    <div class="scroll-hint">
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      scroll
+    </div>
+  </div>
+</section>
+
+<!-- ══ TABLE OF CONTENTS ══════════════════════════════════════════════ -->
+<nav class="toc">
+  <p class="toc-label">Contents</p>
+  <ul class="toc-list">
+    <li class="toc-item"><a href="#wifi" class="toc-link"><span class="toc-name">Wifi</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#weather" class="toc-link"><span class="toc-name">Weather</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#tides" class="toc-link"><span class="toc-name">Tides & Sunrise</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#eats" class="toc-link"><span class="toc-name">Eats</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#explore" class="toc-link"><span class="toc-name">Explore</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#beaches" class="toc-link"><span class="toc-name">Beaches</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#fireplace" class="toc-link"><span class="toc-name">Fireplace</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#rules" class="toc-link"><span class="toc-name">House Rules</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#emergency" class="toc-link"><span class="toc-name">Emergency</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#checkout" class="toc-link"><span class="toc-name">Checkout</span><span class="toc-arrow">↓</span></a></li>
+  </ul>
+</nav>
+
+<!-- ══ WIFI ══════════════════════════════════════════════════════════ -->
+<section class="chapter" id="wifi">
+  <div class="chapter-header" onclick="toggleChapter('wifi')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">01 &nbsp;—&nbsp; Wifi</p>
+      <h2 class="chapter-title">Get<br><em>connected.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="chapter-body">
+    <div class="wifi-block">
+      <div class="wifi-item">
+        <p class="wifi-label">Network</p>
+        <p class="wifi-value">BeachHouse_5G</p>
+      </div>
+      <div class="wifi-item">
+        <p class="wifi-label">Password</p>
+        <p class="wifi-value">sunshine2024</p>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText('sunshine2024').then(()=>{this.textContent='Copied ✓';setTimeout(()=>this.textContent='Copy password',1800)})">Copy password</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WEATHER ════════════════════════════════════════════════════════ -->
+<section class="chapter" id="weather">
+  <div class="chapter-header" onclick="toggleChapter('weather')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">02 &nbsp;—&nbsp; Weather</p>
+      <h2 class="chapter-title">Today's<br><em>conditions.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="chapter-body">
+    <p class="weather-condition" id="wx-condition">—</p>
+    <p class="weather-temp" id="wx-temp"><sup>°</sup></p>
+    <p class="weather-feel" id="wx-feel">Loading weather...</p>
+    <div class="forecast-row" id="wx-forecast">
+      <div class="forecast-day"><p class="forecast-label">—</p><p class="forecast-icon">·</p><p class="forecast-temp">—</p></div>
+      <div class="forecast-day"><p class="forecast-label">—</p><p class="forecast-icon">·</p><p class="forecast-temp">—</p></div>
+      <div class="forecast-day"><p class="forecast-label">—</p><p class="forecast-icon">·</p><p class="forecast-temp">—</p></div>
+      <div class="forecast-day"><p class="forecast-label">—</p><p class="forecast-icon">·</p><p class="forecast-temp">—</p></div>
+      <div class="forecast-day"><p class="forecast-label">—</p><p class="forecast-icon">·</p><p class="forecast-temp">—</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TIDES ══════════════════════════════════════════════════════════ -->
+<section class="chapter" id="tides">
+  <div class="chapter-header">
+    <p class="chapter-number">03 &nbsp;—&nbsp; Tides & Sunrise</p>
+    <h2 class="chapter-title">The<br><em>rhythm<br>of the sea.</em></h2>
+  </div>
+  <div class="chapter-body">
+    <p class="chapter-intro">Plan your beach time around the tides. Low tide is the best moment to explore tide pools and walk the exposed shore.</p>
+    <div id="tides-data">
+      <div class="data-row"><span class="data-key">Loading</span><span class="data-val">—</span></div>
+    </div>
+    <div style="margin-top:24px;border-top:1px solid var(--rule);padding-top:24px">
+      <div class="data-row"><span class="data-key">Sunrise</span><span class="data-val" id="sun-rise">—</span></div>
+      <div class="data-row"><span class="data-key">Sunset</span><span class="data-val" id="sun-set">—</span></div>
+      <div class="data-row"><span class="data-key">Golden hour</span><span class="data-val" id="sun-golden">—</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EATS ══════════════════════════════════════════════════════════ -->
+<section class="chapter" id="eats">
+  <div class="chapter-header" onclick="toggleChapter('eats')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">04 &nbsp;—&nbsp; Eats</p>
+      <h2 class="chapter-title">Where<br><em>to dine.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="chapter-body">
+    <p class="chapter-intro">Our curated picks within easy reach of the house.</p>
+    <ul class="place-list">
+      <li class="place-item">
+        <div><p class="place-name">The Crab Pot</p><p class="place-note">Waterfront seafood, casual and always fresh — 0.4 mi</p></div>
+        <span class="place-tag">Seafood</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Driftwood Kitchen</p><p class="place-note">Pacific Northwest small plates, excellent wine list — 1.2 mi</p></div>
+        <span class="place-tag">Fine Dining</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Sandy's Café</p><p class="place-note">Best breakfast in town, get there before 9am — 0.6 mi</p></div>
+        <span class="place-tag">Breakfast</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Tide & Timber</p><p class="place-note">Local craft beer, wood-fired pizza, dog-friendly patio — 0.8 mi</p></div>
+        <span class="place-tag">Casual</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Coastal Grounds</p><p class="place-note">Third wave coffee, house-made pastries — 0.3 mi</p></div>
+        <span class="place-tag">Coffee</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ EXPLORE ════════════════════════════════════════════════════════ -->
+<section class="chapter" id="explore">
+  <div class="chapter-header" onclick="toggleChapter('explore')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">05 &nbsp;—&nbsp; Explore</p>
+      <h2 class="chapter-title">Beyond<br><em>the house.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="chapter-body">
+    <p class="chapter-intro">The best of the area, handpicked for guests who want more than the obvious.</p>
+    <ul class="place-list">
+      <li class="place-item">
+        <div><p class="place-name">Cape Disappointment</p><p class="place-note">Historic lighthouse, dramatic headland views — 4 mi</p></div>
+        <span class="place-tag">Views</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Willapa Bay Oysters</p><p class="place-note">Buy direct from the farm, shuck on the deck — 12 mi</p></div>
+        <span class="place-tag">Local</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Leadbetter Point</p><p class="place-note">Remote dune hike, migratory birds, solitude — 18 mi</p></div>
+        <span class="place-tag">Nature</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Oysterville</p><p class="place-note">Historic National Register village, 1850s charm — 14 mi</p></div>
+        <span class="place-tag">History</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ BEACHES ════════════════════════════════════════════════════════ -->
+<section class="chapter" id="beaches">
+  <div class="chapter-header" onclick="toggleChapter('beaches')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">06 &nbsp;—&nbsp; Beaches</p>
+      <h2 class="chapter-title">Find<br><em>your shore.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="chapter-body">
+    <p class="chapter-intro">Every beach along this stretch has its own character. Here's how to choose.</p>
+    <ul class="place-list">
+      <li class="place-item">
+        <div><p class="place-name">North Beach</p><p class="place-note">Wide, uncrowded, best for walking and kite flying</p></div>
+        <span class="place-tag">Walking</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Waikiki Beach</p><p class="place-note">Calm, sheltered — ideal for families and young swimmers</p></div>
+        <span class="place-tag">Families</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Benson Beach</p><p class="place-note">Wind-swept and dramatic, surfers and dog walkers — leash required</p></div>
+        <span class="place-tag">Dogs</span>
+      </li>
+      <li class="place-item">
+        <div><p class="place-name">Tide Pools at Low Tide</p><p class="place-note">Walk south from the house at low tide for excellent pools</p></div>
+        <span class="place-tag">Nature</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ FIREPLACE ══════════════════════════════════════════════════════ -->
+<section class="chapter" id="fireplace">
+  <div class="chapter-header" onclick="toggleChapter('fireplace')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">07 &nbsp;—&nbsp; Fireplace</p>
+      <h2 class="chapter-title">Light<br><em>the fire.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="chapter-body">
+    <p class="chapter-intro">The fireplace is one of the best features of the house. Follow these steps and you'll have it going in minutes.</p>
+    <ul class="step-list">
+      <li class="step-item">
+        <div class="step-num">1</div>
+        <div><p class="step-text">Confirm the damper is fully open. Reach up and pull the handle toward you until it stops.</p><p class="step-note">You should feel air drafting upward when it's open.</p></div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">2</div>
+        <div><p class="step-text">Place two fire starters on the grate and stack three or four pieces of seasoned wood loosely on top.</p></div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">3</div>
+        <div><p class="step-text">Light the fire starters from below using the long lighter on the mantle.</p></div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">4</div>
+        <div><p class="step-text">Leave the glass doors open until the fire is well established — about 10 minutes — then close them.</p><p class="step-note">Closing the doors reduces smoke and increases efficiency.</p></div>
+      </li>
+      <li class="step-item">
+        <div class="step-num">5</div>
+        <div><p class="step-text">When done, allow the fire to burn out completely. Never leave unattended. Close the damper once fully cool.</p></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ RULES ══════════════════════════════════════════════════════════ -->
+<section class="chapter" id="rules">
+  <div class="chapter-header" onclick="toggleChapter('rules')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">08 &nbsp;—&nbsp; House Rules</p>
+      <h2 class="chapter-title">How we<br><em>share this<br>space.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="chapter-body">
+    <p class="chapter-intro">A few simple expectations that help us keep this house in great shape for every guest.</p>
+    <ul class="rule-list">
+      <li class="rule-item"><span class="rule-num">01</span><p class="rule-text">No smoking indoors. The deck is fine — please dispose of cigarettes in the sand bucket provided.</p></li>
+      <li class="rule-item"><span class="rule-num">02</span><p class="rule-text">Pets are welcome with prior approval. Please keep them off the furniture and clean up after them outside.</p></li>
+      <li class="rule-item"><span class="rule-num">03</span><p class="rule-text">Quiet hours after 10pm. The neighbors are close and the walls are thin.</p></li>
+      <li class="rule-item"><span class="rule-num">04</span><p class="rule-text">Maximum occupancy is six guests. Please do not host additional visitors overnight.</p></li>
+      <li class="rule-item"><span class="rule-num">05</span><p class="rule-text">Leave the kitchen as you found it. Run the dishwasher before checkout if you've used it.</p></li>
+      <li class="rule-item"><span class="rule-num">06</span><p class="rule-text">Sand stays outside. Rinse off at the outdoor shower before coming in from the beach.</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══ EMERGENCY ══════════════════════════════════════════════════════ -->
+<section class="chapter" id="emergency">
+  <div class="chapter-header" onclick="toggleChapter('emergency')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">09 &nbsp;—&nbsp; Emergency</p>
+      <h2 class="chapter-title">If you<br><em>need help.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="chapter-body">
+    <p class="chapter-intro">We hope you never need this page. It's here just in case.</p>
+
+    <div class="emergency-block">
+      <p class="emergency-label">Emergency Services</p>
+      <p class="emergency-name">Police · Fire · Ambulance</p>
+      <p class="emergency-number">911</p>
+    </div>
+
+    <div class="emergency-block" style="margin-bottom:16px">
+      <p class="emergency-label">Tsunami Evacuation</p>
+      <p class="emergency-name">Evacuation Route</p>
+      <p class="emergency-detail" style="margin-top:8px;line-height:1.7">Turn right out the front door onto Ocean Ave. Head east on Ocean Ave for 0.4 miles. Turn left on Ridge Rd and continue uphill to the designated assembly point at Pacific Heights Park. Do not return to the house until authorities confirm it is safe.</p>
+    </div>
+
+    <div class="data-row"><span class="data-key">Nearest ER</span><span class="data-val" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">Ocean Beach Hospital<small style="display:block;text-align:right">4.2 mi east</small></span></div>
+    <div class="data-row"><span class="data-key">Urgent Care</span><span class="data-val" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">Long Beach Clinic<small style="display:block;text-align:right">1.8 mi north</small></span></div>
+    <div class="data-row"><span class="data-key">Poison Control</span><span class="data-val" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">1-800-222-1222</span></div>
+    <div class="data-row"><span class="data-key">Your host</span><span class="data-val" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">(509) 555-0190</span></div>
+  </div>
+</section>
+
+<!-- ══ CHECKOUT ════════════════════════════════════════════════════════ -->
+<section class="chapter" id="checkout">
+  <div class="chapter-header" onclick="toggleChapter('checkout')">
+    <div class="chapter-header-left">
+      <p class="chapter-number">10 &nbsp;—&nbsp; Checkout</p>
+      <h2 class="chapter-title">Until<br><em>next time.</em></h2>
+    </div>
+    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+  </div>
+  <div class="chapter-body">
+    <p class="chapter-intro">Checkout is by 11am. A few things before you go:</p>
+    <ul class="step-list">
+      <li class="step-item">
+        <div class="step-num">1</div>
+        <p class="step-text">Start the dishwasher if you used it.</p>
+      </li>
+      <li class="step-item">
+        <div class="step-num">2</div>
+        <p class="step-text">Take all trash to the bins at the side of the house.</p>
+      </li>
+      <li class="step-item">
+        <div class="step-num">3</div>
+        <p class="step-text">Leave used towels in the bathtub — no need to fold.</p>
+      </li>
+      <li class="step-item">
+        <div class="step-num">4</div>
+        <p class="step-text">Close and lock all windows and doors.</p>
+      </li>
+      <li class="step-item">
+        <div class="step-num">5</div>
+        <p class="step-text">Leave the keys on the kitchen counter.</p>
+      </li>
+      <li class="step-item">
+        <div class="step-num">6</div>
+        <p class="step-text">Lock the front door behind you. The lockbox is to the right of the door.</p>
+      </li>
+    </ul>
+    <div style="margin-top:36px;padding-top:28px;border-top:1px solid var(--rule)">
+      <p style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--navy);line-height:1.5;font-style:italic">"We hope the ocean treated you well. Come back soon."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COLOPHON ════════════════════════════════════════════════════════ -->
+<footer class="colophon">
+  <div class="colophon-mark">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
+  </div>
+  <p class="colophon-name">Glide</p>
+  <p class="colophon-sub">Curated hospitality systems</p>
+</footer>
+
+<script>
+  // ── HELPERS ──────────────────────────────────────────────────────────
+  function fmt12(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  }
+
+  function dayName(dateStr) {
+    return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'short' });
+  }
+
+  function weatherIcon(id) {
+    if (id >= 200 && id < 300) return '⛈';
+    if (id >= 300 && id < 400) return '🌦';
+    if (id >= 500 && id < 600) return '🌧';
+    if (id >= 600 && id < 700) return '❄️';
+    if (id >= 700 && id < 800) return '🌫';
+    if (id === 800) return '☀️';
+    if (id === 801 || id === 802) return '⛅';
+    return '🌤';
+  }
+
+  function toF(k) { return Math.round((k - 273.15) * 9/5 + 32); }
+
+  // ── SUNRISE / SUNSET ─────────────────────────────────────────────────
+  async function loadSunriseSunset() {
+    try {
+      const url = `https://api.sunrise-sunset.org/json?lat=${PROPERTY.lat}&lng=${PROPERTY.lng}&formatted=0`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.status !== 'OK') throw new Error('API error');
+
+      const rise   = new Date(data.results.sunrise);
+      const set    = new Date(data.results.sunset);
+      const golden = new Date(set.getTime() - 30 * 60000); // 30 min before sunset
+
+      document.getElementById('sun-rise').textContent   = fmt12(rise);
+      document.getElementById('sun-set').textContent    = fmt12(set);
+      document.getElementById('sun-golden').textContent = fmt12(golden);
+    } catch(e) {
+      document.getElementById('sun-rise').textContent = 'Unavailable';
+    }
+  }
+
+  // ── TIDES ─────────────────────────────────────────────────────────────
+  async function loadTides() {
+    try {
+      const today = new Date();
+      const dateStr = today.toISOString().slice(0,10).replace(/-/g,'');
+      const url = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter`
+        + `?station=${PROPERTY.noaaStation}`
+        + `&product=predictions&datum=MLLW&time_zone=lst_ldt`
+        + `&interval=hilo&units=english&application=glide&format=json`
+        + `&begin_date=${dateStr}&range=24`;
+
+      const res  = await fetch(url);
+      const data = await res.json();
+      if (!data.predictions) throw new Error('No tide data');
+
+      const container = document.getElementById('tides-data');
+      container.innerHTML = data.predictions.map(p => {
+        const type = p.type === 'H' ? 'High tide' : 'Low tide';
+        const time = fmt12(p.t);
+        const ht   = parseFloat(p.v).toFixed(1);
+        return `<div class="data-row">
+          <span class="data-key">${type}</span>
+          <span class="data-val">${time} <small>${ht} ft</small></span>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      document.getElementById('tides-data').innerHTML =
+        '<div class="data-row"><span class="data-key">Tides</span><span class="data-val" style="font-size:14px;font-family:Jost">Unavailable</span></div>';
+    }
+  }
+
+  // ── WEATHER ───────────────────────────────────────────────────────────
+  async function loadWeather() {
+    if (PROPERTY.weatherKey === 'YOUR_KEY_HERE') {
+      document.getElementById('wx-feel').textContent = 'Add your OpenWeatherMap key to enable live weather.';
+      return;
+    }
+    try {
+      // Current weather
+      const cur = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${PROPERTY.lat}&lon=${PROPERTY.lng}&appid=${PROPERTY.weatherKey}`
+      ).then(r => r.json());
+
+      document.getElementById('wx-condition').textContent = cur.weather[0].main;
+      document.getElementById('wx-temp').innerHTML = `${toF(cur.main.temp)}<sup>°</sup>`;
+      document.getElementById('wx-feel').textContent =
+        `Feels like ${toF(cur.main.feels_like)}° · Wind ${Math.round(cur.wind.speed)} mph · Humidity ${cur.main.humidity}%`;
+
+      // 5-day forecast
+      const fore = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${PROPERTY.lat}&lon=${PROPERTY.lng}&appid=${PROPERTY.weatherKey}`
+      ).then(r => r.json());
+
+      // One reading per day at noon
+      const days = {};
+      fore.list.forEach(item => {
+        const d = item.dt_txt.slice(0,10);
+        if (!days[d] && item.dt_txt.includes('12:00')) days[d] = item;
+      });
+
+      const dayEls = document.querySelectorAll('#wx-forecast .forecast-day');
+      Object.values(days).slice(0,5).forEach((day, i) => {
+        if (!dayEls[i]) return;
+        dayEls[i].querySelector('.forecast-label').textContent = dayName(day.dt_txt);
+        dayEls[i].querySelector('.forecast-icon').textContent  = weatherIcon(day.weather[0].id);
+        dayEls[i].querySelector('.forecast-temp').textContent  = `${toF(day.main.temp)}°`;
+      });
+    } catch(e) {
+      document.getElementById('wx-feel').textContent = 'Weather unavailable.';
+    }
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────────
+  loadSunriseSunset();
+  loadTides();
+  loadWeather();
+
+</script>
+
+<script>
+  // ── ACCORDION ────────────────────────────────────────────────────────
+  function toggleChapter(id) {
+    const el = document.getElementById(id);
+    const isOpen = el.classList.contains('open');
+    // close all
+    document.querySelectorAll('.chapter').forEach(c => c.classList.remove('open'));
+    // open this one if it was closed
+    if (!isOpen) {
+      el.classList.add('open');
+      setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
+    updateNav();
+  }
+
+  function openChapter(id) {
+    document.querySelectorAll('.chapter').forEach(c => c.classList.remove('open'));
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('open');
+      setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    }
+    updateNav();
+  }
+
+  function updateNav() {
+    const openEl = document.querySelector('.chapter.open');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (openEl) {
+      const active = document.querySelector(`.nav-item[href="#${openEl.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  }
+
+  // handle nav clicks — open section directly
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', e => {
+      const hash = item.getAttribute('href');
+      if (hash && hash !== '#top') {
+        e.preventDefault();
+        openChapter(hash.slice(1));
+      }
+    });
+  });
+
+  // handle TOC clicks
+  document.querySelectorAll('.toc-link').forEach(link => {
+    link.addEventListener('click', e => {
+      const hash = link.getAttribute('href');
+      if (hash && hash !== '#top') {
+        e.preventDefault();
+        openChapter(hash.slice(1));
+      }
+    });
+  });
+
+  // on load — anchor = open that one only / no anchor = open all
+  window.addEventListener('load', () => {
+    const hash = window.location.hash.slice(1);
+    if (hash && document.getElementById(hash)?.classList.contains('chapter')) {
+      // specific disc scan — open only that section
+      openChapter(hash);
+    } else {
+      // welcome book QR or direct URL — open everything
+      document.querySelectorAll('.chapter').forEach(c => c.classList.add('open'));
+    }
+  });
+</script>
+
+</body>
+</html>
