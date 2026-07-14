@@ -14,8 +14,9 @@
       location:    "Rockaway Beach, OR",
       lat:         45.6157,
       lng:         -123.9390,
+      timeZone:    "America/Los_Angeles",
       noaaStation: "9437540",
-      weatherKey:  "d7761d6dd89a0418e24d0461437361f8",
+      weatherKey:  "d7761d6dd89a0418e24d0461437361f8", // public in this static GitHub Pages build
     };
     // ══════════════════════════════════════════════
   </script>
@@ -218,6 +219,11 @@
       -webkit-tap-highlight-color: transparent;
       transition: background 0.15s;
       gap: 16px;
+      width: 100%;
+      border: 0;
+      background: transparent;
+      text-align: left;
+      font: inherit;
     }
 
     .chapter-header:active { background: var(--warm); }
@@ -303,9 +309,14 @@
     }
 
     .chapter.open .chapter-body {
-      max-height: 2000px;
+      max-height: none;
       padding: 32px 32px 48px;
     }
+
+    .chapter-header:focus-visible, .img-trigger:focus-visible,
+    .nav-item:focus-visible, .toc-link:focus-visible,
+    .copy-btn:focus-visible, .cat-tag:focus-visible,
+    .modal-close:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 
     .chapter-intro {
       font-size: 15px;
@@ -820,6 +831,7 @@
       opacity: 1;
       pointer-events: all;
     }
+    .modal-overlay[hidden] { display: none; }
 
     .modal-img {
       max-width: 95vw;
@@ -1485,14 +1497,14 @@
 
 <!-- ══ WIFI ══════════════════════════════════════════════════════════ -->
 <section class="chapter" id="wifi">
-  <div class="chapter-header" onclick="toggleChapter('wifi')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('wifi')" aria-expanded="false" aria-controls="wifi-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>01 &nbsp;—&nbsp; Wifi</p>
       <h2 class="chapter-title">Get<br><em>connected.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="wifi-body">
     <div class="wifi-block">
       <div class="wifi-item">
         <p class="wifi-label">Network</p>
@@ -1509,14 +1521,14 @@
 
 <!-- ══ WEATHER ════════════════════════════════════════════════════════ -->
 <section class="chapter" id="weather">
-  <div class="chapter-header" onclick="toggleChapter('weather')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('weather')" aria-expanded="false" aria-controls="weather-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>02 &nbsp;—&nbsp; Weather</p>
       <h2 class="chapter-title">Today's<br><em>conditions.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="weather-body">
     <p class="weather-condition" id="wx-condition">—</p>
     <p class="weather-temp" id="wx-temp"><sup>°</sup></p>
     <p class="weather-feel" id="wx-feel">Loading weather...</p>
@@ -1532,14 +1544,14 @@
 
 <!-- ══ TIDES ══════════════════════════════════════════════════════════ -->
 <section class="chapter" id="tides">
-  <div class="chapter-header" onclick="toggleChapter('tides')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('tides')" aria-expanded="false" aria-controls="tides-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5s2.5 2 5 2 2.5-2 5-2"/><path d="M2 12c.6.5 1.2 1 2.5 1C7 13 7 11 9.5 11s2.5 2 5 2 2.5-2 5-2"/><path d="M2 18c.6.5 1.2 1 2.5 1C7 19 7 17 9.5 17s2.5 2 5 2 2.5-2 5-2"/></svg>03 &nbsp;—&nbsp; Tides &amp; Sunrise</p>
       <h2 class="chapter-title">The<br><em>rhythm<br>of the sea.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="tides-body">
     <p class="chapter-intro">Plan your beach time around the tides. Low tide is the best moment to explore tide pools and walk the exposed shore.</p>
     <div id="tides-data">
       <div class="data-row"><span class="data-key">Loading</span><span class="data-val">—</span></div>
@@ -1554,14 +1566,14 @@
 
 <!-- ══ EATS ══════════════════════════════════════════════════════════ -->
 <section class="chapter" id="eats">
-  <div class="chapter-header" onclick="toggleChapter('eats')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('eats')" aria-expanded="false" aria-controls="eats-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="18" y2="20"/><path d="M6 6v4a4 4 0 0 0 4 4v6"/><line x1="6" y1="6" x2="10" y2="6"/><line x1="6" y1="10" x2="10" y2="10"/></svg>04 &nbsp;—&nbsp; Eats</p>
       <h2 class="chapter-title">Where<br><em>to dine.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="eats-body">
     <p class="chapter-intro">Our curated picks within easy reach of the house.</p>
     <div class="cat-tags" id="eats-tags">
       <button class="cat-tag active" onclick="filterEats('all', this)">All</button>
@@ -1609,14 +1621,14 @@
 
 <!-- ══ EXPLORE ════════════════════════════════════════════════════════ -->
 <section class="chapter" id="explore">
-  <div class="chapter-header" onclick="toggleChapter('explore')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('explore')" aria-expanded="false" aria-controls="explore-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>05 &nbsp;—&nbsp; Explore</p>
       <h2 class="chapter-title">Beyond<br><em>the house.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="explore-body">
     <p class="chapter-intro">The best of the area, handpicked for guests who want more than the obvious.</p>
     <ul class="place-list">
       <li class="place-item has-thumb">
@@ -1645,14 +1657,14 @@
 
 <!-- ══ BEACHES ════════════════════════════════════════════════════════ -->
 <section class="chapter" id="beaches">
-  <div class="chapter-header" onclick="toggleChapter('beaches')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('beaches')" aria-expanded="false" aria-controls="beaches-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>06 &nbsp;—&nbsp; Beaches</p>
       <h2 class="chapter-title">Find<br><em>your shore.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="beaches-body">
     <p class="chapter-intro">Every beach along this stretch has its own character. Here's how to choose.</p>
     <ul class="place-list">
       <li class="place-item">
@@ -1677,14 +1689,14 @@
 
 <!-- ══ FIREPLACE ══════════════════════════════════════════════════════ -->
 <section class="chapter" id="fireplace">
-  <div class="chapter-header" onclick="toggleChapter('fireplace')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('fireplace')" aria-expanded="false" aria-controls="fireplace-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-2.69 10-6-3 0-5-1-5-4 0-2-2-4-5-4S7 10 7 12c0 3-2 4-5 4 0 3.31 4.48 6 10 6z"/><path d="M12 22V12"/></svg>07 &nbsp;—&nbsp; Fireplace</p>
       <h2 class="chapter-title">Light<br><em>the fire.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="fireplace-body">
     <p class="chapter-intro">The fireplace is one of the best features of the house. Follow these steps and you'll have it going in minutes.</p>
     <ul class="step-list">
       <li class="step-item">
@@ -1713,14 +1725,14 @@
 
 <!-- ══ RULES ══════════════════════════════════════════════════════════ -->
 <section class="chapter" id="rules">
-  <div class="chapter-header" onclick="toggleChapter('rules')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('rules')" aria-expanded="false" aria-controls="rules-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>08 &nbsp;—&nbsp; House Rules</p>
       <h2 class="chapter-title">How we<br><em>share this<br>space.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="rules-body">
     <p class="chapter-intro">A few simple expectations that help us keep this house in great shape for every guest.</p>
     <ul class="rule-list">
       <li class="rule-item"><span class="rule-num">01</span><p class="rule-text">No smoking indoors. The deck is fine — please dispose of cigarettes in the sand bucket provided.</p></li>
@@ -1735,14 +1747,14 @@
 
 <!-- ══ EMERGENCY ══════════════════════════════════════════════════════ -->
 <section class="chapter" id="emergency">
-  <div class="chapter-header" onclick="toggleChapter('emergency')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('emergency')" aria-expanded="false" aria-controls="emergency-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>09 &nbsp;—&nbsp; Emergency</p>
       <h2 class="chapter-title">If you<br><em>need help.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="emergency-body">
     <p class="chapter-intro">We hope you never need this page. It's here just in case.</p>
 
     <div class="emergency-block">
@@ -1753,37 +1765,35 @@
 
     <div class="emergency-block" style="margin-bottom:16px">
       <p class="emergency-label">Tsunami Evacuation</p>
-      <p class="emergency-name">Evacuation Route</p>
-      <p class="emergency-detail" style="margin-top:8px;line-height:1.7">Turn right out the front door onto Ocean Ave. Head east on Ocean Ave for 0.4 miles. Turn left on Ridge Rd and continue uphill to the designated assembly point at Pacific Heights Park. Do not return to the house until authorities confirm it is safe.</p>
+      <p class="emergency-name">Move inland to higher ground</p>
+      <p class="emergency-detail" style="margin-top:8px;line-height:1.7">If you feel a strong or long earthquake, drop, cover and hold on. Then evacuate immediately—do not wait for an official warning. Follow posted routes and the official map for your exact location.</p>
     </div>
-    <div class="img-trigger" onclick="openModal('https://placehold.co/800x600/2b3a52/c9a96e?text=Evacuation+Map', 'Tsunami Evacuation Route')">
+    <a class="img-trigger" href="https://pubs.oregon.gov/dogami/tsubrochures/RockawayBeach-EvacBrochure_onscreen.pdf" target="_blank" rel="noopener noreferrer">
       <div class="img-trigger-icon">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       </div>
       <div class="img-trigger-text">
-        <p class="img-trigger-label">View Evacuation Map</p>
-        <p class="img-trigger-sub">Tap to open full screen</p>
+        <p class="img-trigger-label">Official Evacuation Map</p>
+        <p class="img-trigger-sub">Oregon DOGAMI PDF · opens in a new tab</p>
       </div>
       <span class="img-trigger-arrow">↗</span>
-    </div>
+    </a>
 
-    <div class="data-row"><span class="data-key">Nearest ER</span><span class="data-val" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">Ocean Beach Hospital<small style="display:block;text-align:right">4.2 mi east</small></span></div>
-    <div class="data-row"><span class="data-key">Urgent Care</span><span class="data-val" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">Long Beach Clinic<small style="display:block;text-align:right">1.8 mi north</small></span></div>
-    <div class="data-row"><span class="data-key">Poison Control</span><span class="data-val" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">1-800-222-1222</span></div>
-    <div class="data-row"><span class="data-key">Your host</span><span class="data-val" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">(509) 555-0190</span></div>
+    <div class="data-row"><span class="data-key">Emergency</span><a class="data-val" href="tel:911" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">Call 911</a></div>
+    <div class="data-row"><span class="data-key">Poison Control</span><a class="data-val" href="tel:18002221222" style="font-size:15px;font-family:'Jost',sans-serif;font-weight:400">1-800-222-1222</a></div>
   </div>
 </section>
 
 <!-- ══ CHECKOUT ════════════════════════════════════════════════════════ -->
 <section class="chapter" id="checkout">
-  <div class="chapter-header" onclick="toggleChapter('checkout')">
+  <button type="button" class="chapter-header" onclick="toggleChapter('checkout')" aria-expanded="false" aria-controls="checkout-body">
     <div class="chapter-header-left">
       <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>10 &nbsp;—&nbsp; Checkout</p>
       <h2 class="chapter-title">Until<br><em>next time.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </div>
-  <div class="chapter-body">
+  </button>
+  <div class="chapter-body" id="checkout-body">
     <p class="chapter-intro">Checkout is by 11am. A few things before you go:</p>
     <ul class="step-list">
       <li class="step-item">
@@ -1818,8 +1828,8 @@
 </section>
 
 <!-- ══ IMAGE MODAL ══════════════════════════════════════════════════ -->
-<div class="modal-overlay" id="imgModal" onclick="closeModal()">
-  <button class="modal-close" onclick="closeModal()">
+<div class="modal-overlay" id="imgModal" role="dialog" aria-modal="true" aria-labelledby="modalCaption" onclick="closeModal()" hidden>
+  <button type="button" class="modal-close" onclick="closeModal()" aria-label="Close image viewer">
     <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
   <img class="modal-img" id="modalImg" src="" alt="" onclick="event.stopPropagation()" />
@@ -1839,21 +1849,20 @@
   // ── HELPERS ──────────────────────────────────────────────────────────
   // NOAA returns local time "YYYY-MM-DD HH:MM" — parse manually, no timezone shift
   function fmt12noaa(dateStr) {
-    const [datePart, timePart] = dateStr.split(' ');
-    const [year, month, day] = datePart.split('-');
-    const [hour, minute] = timePart.split(':');
-    const d = new Date(year, month-1, day, hour, minute);
-    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    const [, timePart] = dateStr.split(' ');
+    const [hour, minute] = timePart.split(':').map(Number);
+    return `${hour % 12 || 12}:${String(minute).padStart(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}`;
   }
 
   // Sunrise-sunset API returns UTC ISO — let JS convert to local time
   function fmt12utc(dateStr) {
     const d = new Date(dateStr);
-    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: PROPERTY.timeZone });
   }
 
   function dayName(dateStr) {
-    return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'short' });
+    const [y, m, d] = dateStr.slice(0,10).split('-').map(Number);
+    return new Date(Date.UTC(y, m-1, d)).toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
   }
 
   function weatherIcon(id) {
@@ -1885,17 +1894,15 @@
       document.getElementById('sun-set').textContent    = fmt12utc(set);
       document.getElementById('sun-golden').textContent = fmt12utc(golden);
     } catch(e) {
-      document.getElementById('sun-rise').textContent = 'Unavailable';
+      ['sun-rise','sun-set','sun-golden'].forEach(id => document.getElementById(id).textContent = 'Unavailable');
     }
   }
 
   // ── TIDES ─────────────────────────────────────────────────────────────
   async function loadTides() {
     try {
-      const today = new Date();
-      const y = today.getFullYear();
-      const mo = String(today.getMonth()+1).padStart(2,'0');
-      const dy = String(today.getDate()).padStart(2,'0');
+      const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: PROPERTY.timeZone, year:'numeric', month:'2-digit', day:'2-digit' }).formatToParts(new Date()).filter(p => p.type !== 'literal').map(p => [p.type,p.value]));
+      const y=parts.year, mo=parts.month, dy=parts.day;
       const dateStr = `${y}${mo}${dy}`;
       const url = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter`
         + `?station=${PROPERTY.noaaStation}`
@@ -1904,6 +1911,7 @@
         + `&begin_date=${dateStr}&range=24`;
 
       const res  = await fetch(url);
+      if (!res.ok) throw new Error(`Tide service returned ${res.status}`);
       const data = await res.json();
       if (!data.predictions) throw new Error('No tide data');
 
@@ -1926,14 +1934,16 @@
   // ── WEATHER ───────────────────────────────────────────────────────────
   async function loadWeather() {
     if (PROPERTY.weatherKey === 'YOUR_KEY_HERE') {
-      document.getElementById('wx-feel').textContent = 'Add your OpenWeatherMap key to enable live weather.';
+      document.getElementById('wx-feel').textContent = 'Live weather is temporarily unavailable.';
       return;
     }
     try {
       // Current weather
-      const cur = await fetch(
+      const curRes = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${PROPERTY.lat}&lon=${PROPERTY.lng}&appid=${PROPERTY.weatherKey}`
-      ).then(r => r.json());
+      );
+      if (!curRes.ok) throw new Error(`Weather service returned ${curRes.status}`);
+      const cur = await curRes.json();
 
       document.getElementById('wx-condition').textContent = cur.weather[0].main;
       document.getElementById('wx-temp').innerHTML = `${toF(cur.main.temp)}<sup>°</sup>`;
@@ -1941,9 +1951,11 @@
         `Feels like ${toF(cur.main.feels_like)}° · Wind ${Math.round(cur.wind.speed)} mph · Humidity ${cur.main.humidity}%`;
 
       // 5-day forecast
-      const fore = await fetch(
+      const foreRes = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?lat=${PROPERTY.lat}&lon=${PROPERTY.lng}&appid=${PROPERTY.weatherKey}`
-      ).then(r => r.json());
+      );
+      if (!foreRes.ok) throw new Error(`Forecast service returned ${foreRes.status}`);
+      const fore = await foreRes.json();
 
       // One reading per day at noon
       const days = {};
@@ -1974,16 +1986,25 @@
 <script>
 
   // ── IMAGE MODAL ──────────────────────────────────────────────────────
+  let modalReturnFocus = null;
   function openModal(src, caption) {
+    modalReturnFocus = document.activeElement;
     document.getElementById('modalImg').src = src;
     document.getElementById('modalCaption').textContent = caption || '';
-    document.getElementById('imgModal').classList.add('open');
+    const modal = document.getElementById('imgModal');
+    modal.hidden = false;
+    modal.classList.add('open');
     document.body.style.overflow = 'hidden';
+    modal.querySelector('.modal-close').focus();
   }
 
   function closeModal() {
-    document.getElementById('imgModal').classList.remove('open');
+    const modal = document.getElementById('imgModal');
+    if (modal.hidden) return;
+    modal.classList.remove('open');
+    modal.hidden = true;
     document.body.style.overflow = '';
+    modalReturnFocus?.focus();
   }
 
   // Close on escape key
@@ -2024,6 +2045,7 @@
       el.classList.add('open');
       setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
     }
+    syncAccordionState();
     updateNav();
   }
 
@@ -2034,7 +2056,12 @@
       el.classList.add('open');
       setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
     }
+    syncAccordionState();
     updateNav();
+  }
+
+  function syncAccordionState() {
+    document.querySelectorAll('.chapter').forEach(chapter => chapter.querySelector('.chapter-header')?.setAttribute('aria-expanded', String(chapter.classList.contains('open'))));
   }
 
   function updateNav() {
@@ -2078,6 +2105,7 @@
       // welcome book QR or direct URL — open everything
       document.querySelectorAll('.chapter').forEach(c => c.classList.add('open'));
     }
+    syncAccordionState();
   });
 </script>
 
