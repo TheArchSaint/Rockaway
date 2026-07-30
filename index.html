@@ -17,6 +17,7 @@
       timeZone:    "America/Los_Angeles",
       noaaStation: "9437540",
       weatherKey:  "d7761d6dd89a0418e24d0461437361f8", // public in this static GitHub Pages build
+      googleMapsKey: "AIzaSyDms8rCj64EbrEC1Qh2eXcR9DphpfKH3aE", // leave as-is until your Google Maps project is ready
     };
     // ══════════════════════════════════════════════
   </script>
@@ -986,6 +987,45 @@
       display: none;
     }
 
+    /* ── GOOGLE PLACES RESTAURANT DETAILS ── */
+    .place-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      margin-top: 6px;
+      font-size: 11px;
+      color: #777;
+      line-height: 1.4;
+    }
+
+    .place-rating { color: var(--navy); font-weight: 500; }
+    .place-status.open { color: #4f7458; font-weight: 500; }
+    .place-status.closed { color: #9a5d4f; font-weight: 500; }
+
+    .place-maps {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+      color: var(--navy);
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(43,58,82,0.25);
+      padding-bottom: 2px;
+    }
+
+    .place-maps:active { opacity: 0.65; }
+
+    .google-places-note {
+      margin: -10px 0 22px;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
     /* ── BEAUTY OVERHAUL ── */
 
     /* Warmer accent colors */
@@ -1387,6 +1427,79 @@
       line-height: 1.8;
     }
 
+    /* ── ALL RESTAURANTS MAP LINK ── */
+    .all-restaurants-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 24px;
+      padding: 17px 18px;
+      border-radius: 12px;
+      background: var(--navy);
+      color: var(--white);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .all-restaurants-link:active {
+      transform: scale(0.99);
+      opacity: 0.88;
+    }
+
+    .all-restaurants-link:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    .all-restaurants-link-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .all-restaurants-link-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(201,169,110,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .all-restaurants-link-icon svg {
+      width: 17px;
+      height: 17px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .all-restaurants-link-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      line-height: 1.15;
+    }
+
+    .all-restaurants-link-sub {
+      margin-top: 3px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    .all-restaurants-link-arrow {
+      color: var(--gold);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
   </style>
 </head>
 <body>
@@ -1575,6 +1688,7 @@
   </button>
   <div class="chapter-body" id="eats-body">
     <p class="chapter-intro">Our curated picks within easy reach of the house.</p>
+    <p class="google-places-note" id="google-places-note">Curated by your host. Live details can be supplied by Google Maps.</p>
     <div class="cat-tags" id="eats-tags">
       <button class="cat-tag active" onclick="filterEats('all', this)">All</button>
       <button class="cat-tag" onclick="filterEats('casual', this)">Casual</button>
@@ -1590,32 +1704,49 @@
       <button class="cat-tag" onclick="filterEats('takeout', this)">Takeout</button>
     </div>
     <ul class="place-list" id="eats-list">
-      <li class="place-item has-thumb" data-cats="fine-dining,waterfront">
+      <li class="place-item has-thumb" data-cats="casual,kid-friendly,takeout" data-place-query="The Original Pronto Pup, Rockaway Beach, OR" data-maps-url="https://maps.app.goo.gl/7Gi9R1ocfFYuPAHH8">
         <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div><p class="place-name">Driftwood Kitchen</p><p class="place-note">Pacific Northwest small plates, excellent wine list — 1.2 mi</p></div>
-        <span class="place-tag">Fine Dining</span>
-      </li>
-      <li class="place-item has-thumb" data-cats="seafood,casual,waterfront,kid-friendly">
-        <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div><p class="place-name">The Crab Pot</p><p class="place-note">Waterfront seafood, casual and always fresh — 0.4 mi</p></div>
-        <span class="place-tag">Seafood</span>
-      </li>
-      <li class="place-item has-thumb" data-cats="breakfast,casual">
-        <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div><p class="place-name">Sandy's Café</p><p class="place-note">Best breakfast in town, get there before 9am — 0.6 mi</p></div>
-        <span class="place-tag">Breakfast</span>
-      </li>
-      <li class="place-item has-thumb" data-cats="casual,pizza,bar,kid-friendly">
-        <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div><p class="place-name">Tide &amp; Timber</p><p class="place-note">Local craft beer, wood-fired pizza, dog-friendly patio — 0.8 mi</p></div>
+        <div><p class="place-name">The Original Pronto Pup</p><p class="place-note">Loading live Google Maps details…</p></div>
         <span class="place-tag">Casual</span>
       </li>
-      <li class="place-item has-thumb" data-cats="coffee,breakfast,takeout">
+      <li class="place-item has-thumb" data-cats="casual,bar,kid-friendly,takeout" data-place-query="Pelican Brewing Rockaway Beach, OR" data-maps-url="https://maps.app.goo.gl/TH8HPeQoWuoHjo2z5">
         <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div><p class="place-name">Coastal Grounds</p><p class="place-note">Third wave coffee, house-made pastries — 0.3 mi</p></div>
-        <span class="place-tag">Coffee</span>
+        <div><p class="place-name">Pelican Brewing | Rockaway Beach</p><p class="place-note">Loading live Google Maps details…</p></div>
+        <span class="place-tag">Brewpub</span>
+      </li>
+      <li class="place-item has-thumb" data-cats="casual,pizza,kid-friendly,takeout" data-place-query="Shipwreck Pizza, Rockaway Beach, OR" data-maps-url="https://maps.app.goo.gl/ywX99kpzKL9unGVWA">
+        <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div><p class="place-name">Shipwreck Pizza</p><p class="place-note">Loading live Google Maps details…</p></div>
+        <span class="place-tag">Pizza</span>
+      </li>
+      <li class="place-item has-thumb" data-cats="seafood,casual,takeout,kid-friendly" data-place-query="Old Oregon Smoke House, Rockaway Beach, OR" data-maps-url="https://maps.app.goo.gl/87PAqL93VkX1D7ZB7">
+        <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div><p class="place-name">Old Oregon Smoke House</p><p class="place-note">Loading live Google Maps details…</p></div>
+        <span class="place-tag">Seafood</span>
+      </li>
+      <li class="place-item has-thumb" data-cats="casual,breakfast,kid-friendly,takeout" data-place-query="Bay City Kitchen, Bay City, OR" data-maps-url="https://maps.app.goo.gl/bZkp5NH85wzzvV5m7">
+        <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div><p class="place-name">Bay City Kitchen</p><p class="place-note">Loading live Google Maps details…</p></div>
+        <span class="place-tag">Casual</span>
       </li>
     </ul>
+
+    <a class="all-restaurants-link"
+       href="https://www.google.com/maps/search/?api=1&amp;query=restaurants%20near%20Rockaway%20Beach%2C%20OR"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="View all restaurants near Rockaway Beach on Google Maps">
+      <span class="all-restaurants-link-main">
+        <span class="all-restaurants-link-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-4.35 7-11a7 7 0 1 0-14 0c0 6.65 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        </span>
+        <span>
+          <span class="all-restaurants-link-label">Explore all nearby restaurants</span>
+          <span class="all-restaurants-link-sub">Open Google Maps</span>
+        </span>
+      </span>
+      <span class="all-restaurants-link-arrow">↗</span>
+    </a>
   </div>
 </section>
 
@@ -1957,19 +2088,45 @@
       if (!foreRes.ok) throw new Error(`Forecast service returned ${foreRes.status}`);
       const fore = await foreRes.json();
 
-      // One reading per day at noon
+      // Build a true daily forecast from all 3-hour readings.
+      // OpenWeather's dt_txt is UTC, so selecting "12:00" was actually
+      // showing an early-morning Rockaway Beach temperature. Group readings
+      // by Rockaway's local date, then show the day's low–high range.
       const days = {};
+      const tzOffsetMs = (fore.city?.timezone || 0) * 1000;
+
       fore.list.forEach(item => {
-        const d = item.dt_txt.slice(0,10);
-        if (!days[d] && item.dt_txt.includes('12:00')) days[d] = item;
+        const local = new Date(item.dt * 1000 + tzOffsetMs);
+        const dateKey = local.toISOString().slice(0, 10);
+        const localHour = local.getUTCHours();
+
+        if (!days[dateKey]) {
+          days[dateKey] = {
+            dateKey,
+            min: item.main.temp_min,
+            max: item.main.temp_max,
+            iconItem: item,
+            iconHourDistance: Math.abs(localHour - 12)
+          };
+        } else {
+          days[dateKey].min = Math.min(days[dateKey].min, item.main.temp_min);
+          days[dateKey].max = Math.max(days[dateKey].max, item.main.temp_max);
+
+          // Use the weather icon from the reading closest to local noon.
+          const hourDistance = Math.abs(localHour - 12);
+          if (hourDistance < days[dateKey].iconHourDistance) {
+            days[dateKey].iconItem = item;
+            days[dateKey].iconHourDistance = hourDistance;
+          }
+        }
       });
 
       const dayEls = document.querySelectorAll('#wx-forecast .forecast-day');
       Object.values(days).slice(0,5).forEach((day, i) => {
         if (!dayEls[i]) return;
-        dayEls[i].querySelector('.forecast-label').textContent = dayName(day.dt_txt);
-        dayEls[i].querySelector('.forecast-icon').textContent  = weatherIcon(day.weather[0].id);
-        dayEls[i].querySelector('.forecast-temp').textContent  = `${toF(day.main.temp)}°`;
+        dayEls[i].querySelector('.forecast-label').textContent = dayName(day.dateKey + ' 12:00:00');
+        dayEls[i].querySelector('.forecast-icon').textContent  = weatherIcon(day.iconItem.weather[0].id);
+        dayEls[i].querySelector('.forecast-temp').textContent  = `${toF(day.min)}°–${toF(day.max)}°`;
       });
     } catch(e) {
       document.getElementById('wx-feel').textContent = 'Weather unavailable.';
@@ -2013,6 +2170,162 @@
   });
 
 
+  // ── GOOGLE PLACES — CURATED RESTAURANT ENHANCEMENT ────────────────
+  // Each curated restaurant can use a saved Place ID or an exact Google text query.
+  // This draft uses exact restaurant queries, so it works before Place IDs are hard-coded.
+  function isPlaceOpenNow(openingHours) {
+    if (!openingHours?.periods?.length) return null;
+    const now = new Date();
+    const day = now.getDay();
+    const minutesNow = now.getHours() * 60 + now.getMinutes();
+
+    for (const period of openingHours.periods) {
+      const open = period.open;
+      const close = period.close;
+      if (!open) continue;
+
+      // 24-hour operation can be represented without a close point.
+      if (!close && open.day === day) return true;
+
+      if (open.day === day && close?.day === day) {
+        const openMinutes = open.hour * 60 + open.minute;
+        const closeMinutes = close.hour * 60 + close.minute;
+        if (minutesNow >= openMinutes && minutesNow < closeMinutes) return true;
+      }
+
+      // Handles an opening period that crosses midnight.
+      if (open.day === day && close && close.day !== day) {
+        const openMinutes = open.hour * 60 + open.minute;
+        if (minutesNow >= openMinutes) return true;
+      }
+      if (close?.day === day && open.day !== day) {
+        const closeMinutes = close.hour * 60 + close.minute;
+        if (minutesNow < closeMinutes) return true;
+      }
+    }
+    return false;
+  }
+
+  function straightLineMiles(lat1, lng1, lat2, lng2) {
+    const R = 3958.8;
+    const rad = d => d * Math.PI / 180;
+    const dLat = rad(lat2 - lat1);
+    const dLng = rad(lng2 - lng1);
+    const a = Math.sin(dLat/2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(dLng/2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  async function loadGoogleRestaurantDetails() {
+    const key = PROPERTY.googleMapsKey;
+    const items = [...document.querySelectorAll('#eats-list .place-item[data-place-id], #eats-list .place-item[data-place-query]')];
+    const configured = items.filter(item => item.dataset.placeId?.trim() || item.dataset.placeQuery?.trim());
+    const note = document.getElementById('google-places-note');
+
+    if (!key || key === 'YOUR_GOOGLE_MAPS_API_KEY' || configured.length === 0) {
+      if (note) note.textContent = 'Curated by your host. Add your Google Maps API key to enable live ratings, hours and Maps links.';
+      return;
+    }
+
+    try {
+      // Google recommends the modern Place class via the Places library.
+      const { Place } = await google.maps.importLibrary('places');
+
+      await Promise.all(configured.map(async item => {
+        try {
+          let place;
+          const fields = ['id','displayName','formattedAddress','location','rating','userRatingCount','currentOpeningHours','googleMapsURI','attributions'];
+
+          if (item.dataset.placeId?.trim()) {
+            place = new Place({ id: item.dataset.placeId.trim() });
+            await place.fetchFields({ fields });
+          } else {
+            const { places } = await Place.searchByText({
+              textQuery: item.dataset.placeQuery.trim(),
+              fields,
+              region: 'US'
+            });
+            place = places?.[0];
+            if (!place) throw new Error(`No Google Place match for ${item.dataset.placeQuery}`);
+            console.log(`Resolved Google Place ID for ${place.displayName || item.dataset.placeQuery}: ${place.id}`);
+          }
+
+          const nameEl = item.querySelector('.place-name');
+          const noteEl = item.querySelector('.place-note');
+          if (place.displayName && nameEl) nameEl.textContent = place.displayName;
+
+          const bits = [];
+          if (place.formattedAddress) bits.push(place.formattedAddress.replace(', United States',''));
+          if (place.location) {
+            const miles = straightLineMiles(PROPERTY.lat, PROPERTY.lng, place.location.lat(), place.location.lng());
+            bits.push(`${miles.toFixed(1)} mi away`);
+          }
+          if (noteEl && bits.length) noteEl.textContent = bits.join(' · ');
+
+          let meta = item.querySelector('.place-meta');
+          if (!meta) {
+            meta = document.createElement('div');
+            meta.className = 'place-meta';
+            noteEl?.insertAdjacentElement('afterend', meta);
+          }
+          meta.innerHTML = '';
+
+          if (typeof place.rating === 'number') {
+            const rating = document.createElement('span');
+            rating.className = 'place-rating';
+            rating.textContent = `★ ${place.rating.toFixed(1)}${place.userRatingCount ? ` (${place.userRatingCount.toLocaleString()})` : ''}`;
+            meta.appendChild(rating);
+          }
+
+          const openNow = isPlaceOpenNow(place.currentOpeningHours);
+          if (openNow !== null) {
+            const status = document.createElement('span');
+            status.className = `place-status ${openNow ? 'open' : 'closed'}`;
+            status.textContent = openNow ? 'Open now' : 'Closed now';
+            meta.appendChild(status);
+          }
+
+          const mapsHref = place.googleMapsURI || item.dataset.mapsUrl;
+          if (mapsHref && !item.querySelector('.place-maps')) {
+            const link = document.createElement('a');
+            link.className = 'place-maps';
+            link.href = mapsHref;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = 'View on Google Maps ↗';
+            meta.insertAdjacentElement('afterend', link);
+          }
+        } catch (err) {
+          console.warn('Google Place details failed for one restaurant:', err);
+        }
+      }));
+
+      if (note) note.textContent = 'Curated by your host · ratings, hours and business details supplied by Google Maps.';
+    } catch (err) {
+      console.warn('Google Places could not load:', err);
+      if (note) note.textContent = 'Curated by your host. Google Maps details are temporarily unavailable.';
+    }
+  }
+
+  function loadGoogleMapsScript() {
+    const key = PROPERTY.googleMapsKey;
+    if (!key || key === 'YOUR_GOOGLE_MAPS_API_KEY') return;
+    if (window.google?.maps?.importLibrary) {
+      loadGoogleRestaurantDetails();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&v=weekly&libraries=places`;
+    script.async = true;
+    script.defer = true;
+    script.onload = loadGoogleRestaurantDetails;
+    script.onerror = () => {
+      const note = document.getElementById('google-places-note');
+      if (note) note.textContent = 'Curated by your host. Google Maps details are temporarily unavailable.';
+    };
+    document.head.appendChild(script);
+  }
+
   // ── CATEGORY FILTERING ───────────────────────────────────────────────
   function filterEats(cat, btn) {
     // Update active tag
@@ -2033,6 +2346,8 @@
       }
     });
   }
+
+  loadGoogleMapsScript();
 
   // ── ACCORDION ────────────────────────────────────────────────────────
   function toggleChapter(id) {
