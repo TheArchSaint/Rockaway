@@ -16,8 +16,8 @@
       lng:         -123.9390,
       timeZone:    "America/Los_Angeles",
       noaaStation: "9437540",
-      weatherKey:  "d7761d6dd89a0418e24d0461437361f8", // public in this static GitHub Pages build
-      googleMapsKey: "AIzaSyDms8rCj64EbrEC1Qh2eXcR9DphpfKH3aE", // leave as-is until your Google Maps project is ready
+      weatherEndpoint: "https://rockaway-api.jarensasaint.workers.dev/weather",
+      restaurantEndpoint: "https://rockaway-api.jarensasaint.workers.dev/restaurants",
     };
     // ══════════════════════════════════════════════
   </script>
@@ -1114,6 +1114,21 @@
       background: var(--warm);
     }
 
+    .place-photo-link {
+      width: 64px;
+      height: 64px;
+      display: block;
+      border-radius: 8px;
+      overflow: hidden;
+      text-decoration: none;
+    }
+
+    .place-photo-link .place-thumb {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
     .place-thumb-placeholder {
       width: 64px;
       height: 64px;
@@ -1688,7 +1703,7 @@
   </button>
   <div class="chapter-body" id="eats-body">
     <p class="chapter-intro">Our curated picks within easy reach of the house.</p>
-    <p class="google-places-note" id="google-places-note">Curated by your host. Live details can be supplied by Google Maps.</p>
+    <p class="google-places-note" id="google-places-note">Curated by your host. Live ratings, hours and business details supplied by Google Maps.</p>
     <div class="cat-tags" id="eats-tags">
       <button class="cat-tag active" onclick="filterEats('all', this)">All</button>
       <button class="cat-tag" onclick="filterEats('casual', this)">Casual</button>
@@ -2064,29 +2079,23 @@
 
   // ── WEATHER ───────────────────────────────────────────────────────────
   async function loadWeather() {
-    if (PROPERTY.weatherKey === 'YOUR_KEY_HERE') {
-      document.getElementById('wx-feel').textContent = 'Live weather is temporarily unavailable.';
-      return;
-    }
     try {
-      // Current weather
-      const curRes = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${PROPERTY.lat}&lon=${PROPERTY.lng}&appid=${PROPERTY.weatherKey}`
-      );
-      if (!curRes.ok) throw new Error(`Weather service returned ${curRes.status}`);
-      const cur = await curRes.json();
+      // Weather now comes through the Cloudflare Worker, so the OpenWeather
+      // API key never appears in this public HTML file.
+      const foreRes = await fetch(PROPERTY.weatherEndpoint);
+      if (!foreRes.ok) throw new Error(`Weather service returned ${foreRes.status}`);
+      const fore = await foreRes.json();
+      if (!Array.isArray(fore.list) || !fore.list.length) throw new Error('Forecast data missing');
 
-      document.getElementById('wx-condition').textContent = cur.weather[0].main;
-      document.getElementById('wx-temp').innerHTML = `${toF(cur.main.temp)}<sup>°</sup>`;
+      // The Worker currently returns OpenWeather's 5-day / 3-hour forecast in
+      // imperial units. Use the nearest forecast point for the conditions card.
+      const cur = fore.list[0];
+      document.getElementById('wx-condition').textContent = cur.weather?.[0]?.main || 'Weather';
+      document.getElementById('wx-temp').innerHTML = `${Math.round(cur.main.temp)}<sup>°</sup>`;
       document.getElementById('wx-feel').textContent =
-        `Feels like ${toF(cur.main.feels_like)}° · Wind ${Math.round(cur.wind.speed)} mph · Humidity ${cur.main.humidity}%`;
+        `Feels like ${Math.round(cur.main.feels_like)}° · Wind ${Math.round(cur.wind.speed)} mph · Humidity ${cur.main.humidity}%`;
 
       // 5-day forecast
-      const foreRes = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?lat=${PROPERTY.lat}&lon=${PROPERTY.lng}&appid=${PROPERTY.weatherKey}`
-      );
-      if (!foreRes.ok) throw new Error(`Forecast service returned ${foreRes.status}`);
-      const fore = await foreRes.json();
 
       // Build a true daily forecast from all 3-hour readings.
       // OpenWeather's dt_txt is UTC, so selecting "12:00" was actually
@@ -2126,7 +2135,7 @@
         if (!dayEls[i]) return;
         dayEls[i].querySelector('.forecast-label').textContent = dayName(day.dateKey + ' 12:00:00');
         dayEls[i].querySelector('.forecast-icon').textContent  = weatherIcon(day.iconItem.weather[0].id);
-        dayEls[i].querySelector('.forecast-temp').textContent  = `${toF(day.min)}°–${toF(day.max)}°`;
+        dayEls[i].querySelector('.forecast-temp').textContent  = `${Math.round(day.min)}°–${Math.round(day.max)}°`;
       });
     } catch(e) {
       document.getElementById('wx-feel').textContent = 'Weather unavailable.';
@@ -2170,42 +2179,8 @@
   });
 
 
-  // ── GOOGLE PLACES — CURATED RESTAURANT ENHANCEMENT ────────────────
-  // Each curated restaurant can use a saved Place ID or an exact Google text query.
-  // This draft uses exact restaurant queries, so it works before Place IDs are hard-coded.
-  function isPlaceOpenNow(openingHours) {
-    if (!openingHours?.periods?.length) return null;
-    const now = new Date();
-    const day = now.getDay();
-    const minutesNow = now.getHours() * 60 + now.getMinutes();
-
-    for (const period of openingHours.periods) {
-      const open = period.open;
-      const close = period.close;
-      if (!open) continue;
-
-      // 24-hour operation can be represented without a close point.
-      if (!close && open.day === day) return true;
-
-      if (open.day === day && close?.day === day) {
-        const openMinutes = open.hour * 60 + open.minute;
-        const closeMinutes = close.hour * 60 + close.minute;
-        if (minutesNow >= openMinutes && minutesNow < closeMinutes) return true;
-      }
-
-      // Handles an opening period that crosses midnight.
-      if (open.day === day && close && close.day !== day) {
-        const openMinutes = open.hour * 60 + open.minute;
-        if (minutesNow >= openMinutes) return true;
-      }
-      if (close?.day === day && open.day !== day) {
-        const closeMinutes = close.hour * 60 + close.minute;
-        if (minutesNow < closeMinutes) return true;
-      }
-    }
-    return false;
-  }
-
+  // ── GOOGLE PLACES — VIA CLOUDFLARE WORKER ──────────────────────
+  // The Google API key stays in Cloudflare. This page only calls our Worker.
   function straightLineMiles(lat1, lng1, lat2, lng2) {
     const R = 3958.8;
     const rad = d => d * Math.PI / 180;
@@ -2216,114 +2191,101 @@
   }
 
   async function loadGoogleRestaurantDetails() {
-    const key = PROPERTY.googleMapsKey;
-    const items = [...document.querySelectorAll('#eats-list .place-item[data-place-id], #eats-list .place-item[data-place-query]')];
-    const configured = items.filter(item => item.dataset.placeId?.trim() || item.dataset.placeQuery?.trim());
     const note = document.getElementById('google-places-note');
-
-    if (!key || key === 'YOUR_GOOGLE_MAPS_API_KEY' || configured.length === 0) {
-      if (note) note.textContent = 'Curated by your host. Add your Google Maps API key to enable live ratings, hours and Maps links.';
-      return;
-    }
+    const endpoint = PROPERTY.restaurantEndpoint;
+    if (!endpoint) return;
 
     try {
-      // Google recommends the modern Place class via the Places library.
-      const { Place } = await google.maps.importLibrary('places');
+      const response = await fetch(endpoint);
+      if (!response.ok) throw new Error(`Restaurant API returned ${response.status}`);
+      const data = await response.json();
+      const restaurants = Array.isArray(data.restaurants) ? data.restaurants : [];
 
-      await Promise.all(configured.map(async item => {
-        try {
-          let place;
-          const fields = ['id','displayName','formattedAddress','location','rating','userRatingCount','currentOpeningHours','googleMapsURI','attributions'];
+      restaurants.forEach(place => {
+        const item = document.querySelector(`#eats-list .place-item[data-place-query="${CSS.escape(place.query || '')}"]`);
+        if (!item) return;
 
-          if (item.dataset.placeId?.trim()) {
-            place = new Place({ id: item.dataset.placeId.trim() });
-            await place.fetchFields({ fields });
-          } else {
-            const { places } = await Place.searchByText({
-              textQuery: item.dataset.placeQuery.trim(),
-              fields,
-              region: 'US'
-            });
-            place = places?.[0];
-            if (!place) throw new Error(`No Google Place match for ${item.dataset.placeQuery}`);
-            console.log(`Resolved Google Place ID for ${place.displayName || item.dataset.placeQuery}: ${place.id}`);
+        const nameEl = item.querySelector('.place-name');
+        const noteEl = item.querySelector('.place-note');
+        if (place.displayName && nameEl) nameEl.textContent = place.displayName;
+
+        // Load the first Google Places photo through Cloudflare so the API key stays private.
+        if (place.photoName) {
+          const placeholder = item.querySelector('.place-thumb-placeholder');
+          if (placeholder) {
+            const photoBase = endpoint.replace(/\/restaurants\/?$/, '');
+            const img = document.createElement('img');
+            img.className = 'place-thumb';
+            img.alt = place.displayName ? `${place.displayName} photo` : 'Restaurant photo';
+            img.loading = 'lazy';
+            img.src = `${photoBase}/place-photo?name=${encodeURIComponent(place.photoName)}`;
+
+            // Google requires direct access to the source photo on Google Maps.
+            if (place.photoGoogleMapsUri) {
+              const photoLink = document.createElement('a');
+              photoLink.className = 'place-photo-link';
+              photoLink.href = place.photoGoogleMapsUri;
+              photoLink.target = '_blank';
+              photoLink.rel = 'noopener noreferrer';
+              photoLink.title = 'View photo on Google Maps';
+              photoLink.appendChild(img);
+              placeholder.replaceWith(photoLink);
+            } else {
+              placeholder.replaceWith(img);
+            }
           }
+        }
 
-          const nameEl = item.querySelector('.place-name');
-          const noteEl = item.querySelector('.place-note');
-          if (place.displayName && nameEl) nameEl.textContent = place.displayName;
+        const bits = [];
+        if (place.formattedAddress) bits.push(place.formattedAddress.replace(', USA','').replace(', United States',''));
+        if (place.location?.latitude != null && place.location?.longitude != null) {
+          const miles = straightLineMiles(PROPERTY.lat, PROPERTY.lng, place.location.latitude, place.location.longitude);
+          bits.push(`${miles.toFixed(1)} mi away`);
+        }
+        if (noteEl && bits.length) noteEl.textContent = bits.join(' · ');
 
-          const bits = [];
-          if (place.formattedAddress) bits.push(place.formattedAddress.replace(', United States',''));
-          if (place.location) {
-            const miles = straightLineMiles(PROPERTY.lat, PROPERTY.lng, place.location.lat(), place.location.lng());
-            bits.push(`${miles.toFixed(1)} mi away`);
-          }
-          if (noteEl && bits.length) noteEl.textContent = bits.join(' · ');
+        let meta = item.querySelector('.place-meta');
+        if (!meta) {
+          meta = document.createElement('div');
+          meta.className = 'place-meta';
+          noteEl?.insertAdjacentElement('afterend', meta);
+        }
+        meta.innerHTML = '';
 
-          let meta = item.querySelector('.place-meta');
-          if (!meta) {
-            meta = document.createElement('div');
-            meta.className = 'place-meta';
-            noteEl?.insertAdjacentElement('afterend', meta);
-          }
-          meta.innerHTML = '';
+        if (typeof place.rating === 'number') {
+          const rating = document.createElement('span');
+          rating.className = 'place-rating';
+          rating.textContent = `★ ${place.rating.toFixed(1)}${place.userRatingCount ? ` (${Number(place.userRatingCount).toLocaleString()})` : ''}`;
+          meta.appendChild(rating);
+        }
 
-          if (typeof place.rating === 'number') {
-            const rating = document.createElement('span');
-            rating.className = 'place-rating';
-            rating.textContent = `★ ${place.rating.toFixed(1)}${place.userRatingCount ? ` (${place.userRatingCount.toLocaleString()})` : ''}`;
-            meta.appendChild(rating);
-          }
+        if (typeof place.openNow === 'boolean') {
+          const status = document.createElement('span');
+          status.className = `place-status ${place.openNow ? 'open' : 'closed'}`;
+          status.textContent = place.openNow ? 'Open now' : 'Closed now';
+          meta.appendChild(status);
+        }
 
-          const openNow = isPlaceOpenNow(place.currentOpeningHours);
-          if (openNow !== null) {
-            const status = document.createElement('span');
-            status.className = `place-status ${openNow ? 'open' : 'closed'}`;
-            status.textContent = openNow ? 'Open now' : 'Closed now';
-            meta.appendChild(status);
-          }
-
-          const mapsHref = place.googleMapsURI || item.dataset.mapsUrl;
-          if (mapsHref && !item.querySelector('.place-maps')) {
-            const link = document.createElement('a');
+        const mapsHref = place.googleMapsUri || item.dataset.mapsUrl;
+        let link = item.querySelector('.place-maps');
+        if (mapsHref) {
+          if (!link) {
+            link = document.createElement('a');
             link.className = 'place-maps';
-            link.href = mapsHref;
             link.target = '_blank';
             link.rel = 'noopener noreferrer';
             link.textContent = 'View on Google Maps ↗';
             meta.insertAdjacentElement('afterend', link);
           }
-        } catch (err) {
-          console.warn('Google Place details failed for one restaurant:', err);
+          link.href = mapsHref;
         }
-      }));
+      });
 
       if (note) note.textContent = 'Curated by your host · ratings, hours and business details supplied by Google Maps.';
     } catch (err) {
-      console.warn('Google Places could not load:', err);
-      if (note) note.textContent = 'Curated by your host. Google Maps details are temporarily unavailable.';
+      console.warn('Restaurant details could not load:', err);
+      if (note) note.textContent = 'Curated by your host. Live Google Maps details are temporarily unavailable.';
     }
-  }
-
-  function loadGoogleMapsScript() {
-    const key = PROPERTY.googleMapsKey;
-    if (!key || key === 'YOUR_GOOGLE_MAPS_API_KEY') return;
-    if (window.google?.maps?.importLibrary) {
-      loadGoogleRestaurantDetails();
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&v=weekly&libraries=places`;
-    script.async = true;
-    script.defer = true;
-    script.onload = loadGoogleRestaurantDetails;
-    script.onerror = () => {
-      const note = document.getElementById('google-places-note');
-      if (note) note.textContent = 'Curated by your host. Google Maps details are temporarily unavailable.';
-    };
-    document.head.appendChild(script);
   }
 
   // ── CATEGORY FILTERING ───────────────────────────────────────────────
@@ -2347,7 +2309,7 @@
     });
   }
 
-  loadGoogleMapsScript();
+  loadGoogleRestaurantDetails();
 
   // ── ACCORDION ────────────────────────────────────────────────────────
   function toggleChapter(id) {
