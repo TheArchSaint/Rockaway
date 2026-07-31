@@ -2164,10 +2164,8 @@
     }
   }
 
-  // ── INIT ──────────────────────────────────────────────────────────────
-  loadSunriseSunset();
-  loadTides();
-  loadWeather();
+  // Weather, tides and sunrise/sunset are loaded only when their
+  // corresponding chapter is opened for the first time.
 
 </script>
 
@@ -2408,11 +2406,29 @@
   // Google Places data is loaded only when its section is opened for the first time.
   // Reopening the section does not make another API request during the same page visit.
   const sectionLoadState = {
+    weather: false,
+    tides: false,
     eats: false,
     explore: false
   };
 
   function loadChapterData(id) {
+    if (id === 'weather' && !sectionLoadState.weather) {
+      sectionLoadState.weather = true;
+      loadWeather().catch(() => {
+        // Allow a later retry if the first request fails.
+        sectionLoadState.weather = false;
+      });
+    }
+
+    if (id === 'tides' && !sectionLoadState.tides) {
+      sectionLoadState.tides = true;
+      Promise.all([loadTides(), loadSunriseSunset()]).catch(() => {
+        // Allow a later retry if either request fails.
+        sectionLoadState.tides = false;
+      });
+    }
+
     if (id === 'eats' && !sectionLoadState.eats) {
       sectionLoadState.eats = true;
       loadGoogleRestaurantDetails().catch(() => {
