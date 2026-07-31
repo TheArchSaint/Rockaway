@@ -517,48 +517,130 @@
       letter-spacing: 0.04em;
     }
 
-    /* ── FIREPLACE STEPS ── */
-    .step-list { list-style: none; }
-
-    .step-item {
-      display: flex;
-      gap: 20px;
-      padding: 18px 0;
-      border-bottom: 1px solid var(--rule);
-      align-items: flex-start;
+    /* ── FIREPLACE ── */
+    .fireplace-quick {
+      margin-top: 24px;
+      padding: 20px 22px;
+      border: 1px solid var(--rule);
+      background: rgba(255,255,255,0.4);
+      border-radius: 18px;
     }
 
-    .step-item:last-child { border-bottom: none; }
-
-    .step-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 1px solid var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 11px;
+    .fireplace-quick-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
       color: var(--gold);
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      margin-top: 1px;
+      margin-bottom: 14px;
     }
 
-    .step-text {
+    .fireplace-quick-list {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+
+    .fireplace-quick-list li {
+      position: relative;
+      padding-left: 18px;
       font-size: 15px;
       line-height: 1.65;
       color: #333;
-      padding-top: 4px;
     }
 
-    .step-note {
-      font-size: 12px;
-      color: #666;
-      margin-top: 4px;
-      font-style: italic;
+    .fireplace-quick-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
     }
+
+    .fireplace-detail-list {
+      margin-top: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .fireplace-detail {
+      border: 1px solid var(--rule);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.28);
+      overflow: hidden;
+    }
+
+    .fireplace-detail summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 15px;
+      color: var(--navy);
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+
+    .fireplace-detail summary::-webkit-details-marker { display: none; }
+
+    .fireplace-detail summary::after {
+      content: '+';
+      font-size: 18px;
+      line-height: 1;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .fireplace-detail[open] summary::after {
+      content: '–';
+    }
+
+    .fireplace-detail-body {
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--rule);
+    }
+
+    .fireplace-detail-body p,
+    .fireplace-detail-body li {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #444;
+    }
+
+    .fireplace-detail-body ul {
+      margin-top: 10px;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .fireplace-manual-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--navy);
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .fireplace-manual-link svg {
+      width: 12px;
+      height: 12px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .fireplace-manual-link:hover { color: var(--gold); }
 
     /* ── BACK TO TOP ── */
     .back-top {
@@ -1159,7 +1241,6 @@
 
     /* Alternating section backgrounds */
     #weather .chapter-body,
-    #beaches .chapter-body,
     #rules .chapter-body { background: var(--sage); }
 
     #eats .chapter-body,
@@ -1987,13 +2068,7 @@
   <a href="#explore" class="nav-item" title="Explore">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
   </a>
-
-  <!-- Beaches -->
-  <a href="#beaches" class="nav-item" title="Beaches">
-    <svg viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>
-  </a>
-
-  <!-- Fireplace -->
+<!-- Fireplace -->
   <a href="#fireplace" class="nav-item" title="Fireplace">
     <svg viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-2.69 10-6-3 0-5-1-5-4 0-2-2-4-5-4S7 10 7 12c0 3-2 4-5 4 0 3.31 4.48 6 10 6z"/><path d="M12 22V12"/></svg>
   </a>
@@ -2050,8 +2125,7 @@
     <li class="toc-item"><a href="#tides" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5s2.5 2 5 2 2.5-2 5-2"/><path d="M2 12c.6.5 1.2 1 2.5 1C7 13 7 11 9.5 11s2.5 2 5 2 2.5-2 5-2"/><path d="M2 18c.6.5 1.2 1 2.5 1C7 19 7 17 9.5 17s2.5 2 5 2 2.5-2 5-2"/></svg>Tides</span><span class="toc-arrow">↓</span></a></li>
     <li class="toc-item"><a href="#eats" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="18" y2="20"/><path d="M6 6v4a4 4 0 0 0 4 4v6"/><line x1="6" y1="6" x2="10" y2="6"/><line x1="6" y1="10" x2="10" y2="10"/></svg>Eats</span><span class="toc-arrow">↓</span></a></li>
     <li class="toc-item"><a href="#explore" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Explore</span><span class="toc-arrow">↓</span></a></li>
-    <li class="toc-item"><a href="#beaches" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="1" y1="18" x2="3" y2="18"/></svg>Beaches</span><span class="toc-arrow">↓</span></a></li>
-    <li class="toc-item"><a href="#fireplace" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-2.69 10-6-3 0-5-1-5-4 0-2-2-4-5-4S7 10 7 12c0 3-2 4-5 4 0 3.31 4.48 6 10 6z"/></svg>Fireplace</span><span class="toc-arrow">↓</span></a></li>
+<li class="toc-item"><a href="#fireplace" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-2.69 10-6-3 0-5-1-5-4 0-2-2-4-5-4S7 10 7 12c0 3-2 4-5 4 0 3.31 4.48 6 10 6z"/></svg>Fireplace</span><span class="toc-arrow">↓</span></a></li>
     <li class="toc-item"><a href="#rules" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>House Rules</span><span class="toc-arrow">↓</span></a></li>
     <li class="toc-item"><a href="#emergency" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>Emergency</span><span class="toc-arrow">↓</span></a></li>
     <li class="toc-item"><a href="#checkout" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Checkout</span><span class="toc-arrow">↓</span></a></li>
@@ -2337,71 +2411,90 @@
   </div>
 </section>
 
-<!-- ══ BEACHES ════════════════════════════════════════════════════════ -->
-<section class="chapter" id="beaches">
-  <button type="button" class="chapter-header" onclick="toggleChapter('beaches')" aria-expanded="false" aria-controls="beaches-body">
-    <div class="chapter-header-left">
-      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>06 &nbsp;—&nbsp; Beaches</p>
-      <h2 class="chapter-title">Find<br><em>your shore.</em></h2>
-    </div>
-    <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
-  </button>
-  <div class="chapter-body" id="beaches-body">
-    <p class="chapter-intro">Every beach along this stretch has its own character. Here's how to choose.</p>
-    <ul class="place-list">
-      <li class="place-item">
-        <div><p class="place-name">North Beach</p><p class="place-note">Wide, uncrowded, best for walking and kite flying</p></div>
-        <span class="place-tag">Walking</span>
-      </li>
-      <li class="place-item">
-        <div><p class="place-name">Waikiki Beach</p><p class="place-note">Calm, sheltered — ideal for families and young swimmers</p></div>
-        <span class="place-tag">Families</span>
-      </li>
-      <li class="place-item">
-        <div><p class="place-name">Benson Beach</p><p class="place-note">Wind-swept and dramatic, surfers and dog walkers — leash required</p></div>
-        <span class="place-tag">Dogs</span>
-      </li>
-      <li class="place-item">
-        <div><p class="place-name">Tide Pools at Low Tide</p><p class="place-note">Walk south from the house at low tide for excellent pools</p></div>
-        <span class="place-tag">Nature</span>
-      </li>
-    </ul>
-  </div>
-</section>
-
 <!-- ══ FIREPLACE ══════════════════════════════════════════════════════ -->
 <section class="chapter" id="fireplace">
   <button type="button" class="chapter-header" onclick="toggleChapter('fireplace')" aria-expanded="false" aria-controls="fireplace-body">
     <div class="chapter-header-left">
-      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-2.69 10-6-3 0-5-1-5-4 0-2-2-4-5-4S7 10 7 12c0 3-2 4-5 4 0 3.31 4.48 6 10 6z"/><path d="M12 22V12"/></svg>07 &nbsp;—&nbsp; Fireplace</p>
+      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-2.69 10-6-3 0-5-1-5-4 0-2-2-4-5-4S7 10 7 12c0 3-2 4-5 4 0 3.31 4.48 6 10 6z"/><path d="M12 22V12"/></svg>06 &nbsp;—&nbsp; Fireplace</p>
       <h2 class="chapter-title">Light<br><em>the fire.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
   </button>
   <div class="chapter-body" id="fireplace-body">
-    <p class="chapter-intro">The fireplace is one of the best features of the house. Follow these steps and you'll have it going in minutes.</p>
-    <ul class="step-list">
-      <li class="step-item">
-        <div class="step-num">1</div>
-        <div><p class="step-text">Confirm the damper is fully open. Reach up and pull the handle toward you until it stops.</p><p class="step-note">You should feel air drafting upward when it's open.</p></div>
-      </li>
-      <li class="step-item">
-        <div class="step-num">2</div>
-        <div><p class="step-text">Place two fire starters on the grate and stack three or four pieces of seasoned wood loosely on top.</p></div>
-      </li>
-      <li class="step-item">
-        <div class="step-num">3</div>
-        <div><p class="step-text">Light the fire starters from below using the long lighter on the mantle.</p></div>
-      </li>
-      <li class="step-item">
-        <div class="step-num">4</div>
-        <div><p class="step-text">Leave the glass doors open until the fire is well established — about 10 minutes — then close them.</p><p class="step-note">Closing the doors reduces smoke and increases efficiency.</p></div>
-      </li>
-      <li class="step-item">
-        <div class="step-num">5</div>
-        <div><p class="step-text">When done, allow the fire to burn out completely. Never leave unattended. Close the damper once fully cool.</p></div>
-      </li>
-    </ul>
+    <p class="chapter-intro">A cozy fire can make the whole evening. These quick tips keep it simple, safe, and easy to enjoy.</p>
+
+    <div class="fireplace-quick">
+      <p class="fireplace-quick-label">Quick use</p>
+      <ul class="fireplace-quick-list">
+        <li><strong>Open the draft control first:</strong> pull it outward and slide it to the left.</li>
+        <li><strong>Use real, seasoned firewood only.</strong> Please do not use fake or artificial logs.</li>
+        <li>Start with fire starter, kindling, and a few small pieces of wood.</li>
+        <li>Once the fire is going well, close and latch the door.</li>
+        <li>Turn the fan on only after the fireplace has had time to heat up.</li>
+        <li><strong>When you're done,</strong> let the fire burn out completely, then push the control inward and to the right to close it.</li>
+      </ul>
+    </div>
+
+    <div class="fireplace-detail-list">
+      <details class="fireplace-detail">
+        <summary>Starting a fire</summary>
+        <div class="fireplace-detail-body">
+          <ul>
+            <li>Before lighting, pull the draft control outward and all the way left so the fire gets plenty of air.</li>
+            <li>Use a little fire starter or plain paper, then add kindling and two or three small logs.</li>
+            <li>Light the kindling and let the fire establish before closing and latching the door.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="fireplace-detail">
+        <summary>Adjusting the heat</summary>
+        <div class="fireplace-detail-body">
+          <ul>
+            <li>More open means a hotter, faster fire. More closed means a slower, gentler burn.</li>
+            <li>Once the fire is established, adjust the draft control gradually rather than all at once.</li>
+            <li>The fan should stay off at first, then can be turned on after the fireplace is nicely warmed up.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="fireplace-detail">
+        <summary>What to burn</summary>
+        <div class="fireplace-detail-body">
+          <ul>
+            <li>Burn real, seasoned firewood only.</li>
+            <li>Please do not burn artificial fireplace logs, driftwood, treated lumber, cardboard, trash, or anything other than natural firewood.</li>
+            <li>If you're ever unsure, it is safest not to burn it.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="fireplace-detail">
+        <summary>When you're done</summary>
+        <div class="fireplace-detail-body">
+          <ul>
+            <li>Let the fire and embers burn down naturally.</li>
+            <li>When there are no active flames and the fire is finished, push the draft control inward and to the right to close it.</li>
+            <li>Please do not leave the fireplace unattended while the door is open.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="fireplace-detail">
+        <summary>Good to know</summary>
+        <div class="fireplace-detail-body">
+          <ul>
+            <li>The handle, door, and surrounding surfaces can become very hot, so use care around children and pets.</li>
+            <li>If smoke comes into the room or something does not seem right, please stop using the fireplace and reach out.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <a class="fireplace-manual-link" href="I2450-2-920-765a.pdf" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+      View the full fireplace manual
+    </a>
   </div>
 </section>
 
@@ -2409,7 +2502,7 @@
 <section class="chapter" id="rules">
   <button type="button" class="chapter-header" onclick="toggleChapter('rules')" aria-expanded="false" aria-controls="rules-body">
     <div class="chapter-header-left">
-      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>08 &nbsp;—&nbsp; House Rules</p>
+      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>07 &nbsp;—&nbsp; House Rules</p>
       <h2 class="chapter-title">How we<br><em>share this<br>space.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
@@ -2431,7 +2524,7 @@
 <section class="chapter" id="emergency">
   <button type="button" class="chapter-header" onclick="toggleChapter('emergency')" aria-expanded="false" aria-controls="emergency-body">
     <div class="chapter-header-left">
-      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>09 &nbsp;—&nbsp; Emergency</p>
+      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>08 &nbsp;—&nbsp; Emergency</p>
       <h2 class="chapter-title">If you<br><em>need help.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
@@ -2470,7 +2563,7 @@
 <section class="chapter" id="checkout">
   <button type="button" class="chapter-header" onclick="toggleChapter('checkout')" aria-expanded="false" aria-controls="checkout-body">
     <div class="chapter-header-left">
-      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>10 &nbsp;—&nbsp; Checkout</p>
+      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>09 &nbsp;—&nbsp; Checkout</p>
       <h2 class="chapter-title">Until<br><em>next time.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
