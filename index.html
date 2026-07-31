@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
   <script>
     // ══════════════════════════════════════════════
-    // GLIDE PROPERTY CONFIG — fill these in
+    // BEACON PROPERTY CONFIG — fill these in
     // ══════════════════════════════════════════════
     const PROPERTY = {
       name:        "The Beach House",
@@ -90,7 +90,7 @@
     .cover-body,
     .cover-bottom { position: relative; z-index: 2; }
 
-    .glide-mark {
+    .beacon-mark {
       width: 36px;
       height: 36px;
       border-radius: 50%;
@@ -100,7 +100,7 @@
       justify-content: center;
     }
 
-    .glide-mark svg {
+    .beacon-mark svg {
       width: 14px;
       height: 14px;
       stroke: rgba(255,255,255,0.4);
@@ -744,6 +744,97 @@
     }
 
     .forecast-icon { font-size: 16px; margin-bottom: 4px; }
+
+
+    .weather-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      gap: 28px;
+      align-items: end;
+    }
+
+    .weather-sidecard {
+      border: 1px solid var(--rule);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.4);
+      padding: 16px 14px;
+      min-height: 168px;
+    }
+
+    .weather-sidecard-title {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .weather-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .weather-mini-item {
+      text-align: center;
+    }
+
+    .weather-mini-label {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #777;
+      margin-bottom: 8px;
+    }
+
+    .weather-mini-icon {
+      font-size: 18px;
+      line-height: 1;
+      margin-bottom: 7px;
+    }
+
+    .weather-mini-temp {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .weather-mini-note {
+      font-size: 10px;
+      color: #777;
+      line-height: 1.25;
+    }
+
+    .weather-mini-strip {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      color: #777;
+    }
+
+    .weather-mini-strip strong {
+      color: var(--navy);
+      font-weight: 500;
+      display: block;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 700px) {
+      .weather-top {
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .weather-sidecard {
+        min-height: 0;
+      }
+    }
 
     /* ── FLOATING NAV ── */
     .float-nav {
@@ -1785,6 +1876,81 @@
       .visual-footer { flex-direction: column; gap: 6px; }
     }
 
+  
+
+    /* ── TOC GRID MOCKUP ───────────────────────────────────────────── */
+    .toc {
+      padding: 20px 18px 6px;
+    }
+
+    .toc-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc-item {
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .toc-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      min-height: 108px;
+      padding: 16px 12px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--white);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .toc-link:hover,
+    .toc-link:active {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(201,169,110,0.35);
+      transform: translateY(-1px);
+      color: var(--white);
+    }
+
+    .toc-name {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      font-size: 19px;
+      line-height: 1.15;
+      letter-spacing: -.01em;
+    }
+
+    .toc-icon {
+      width: 28px;
+      height: 28px;
+      stroke-width: 1.7;
+      color: var(--gold);
+      flex: none;
+    }
+
+    .toc-arrow {
+      display: none;
+    }
+
+    @media (min-width: 560px) {
+      .toc-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1854,11 +2020,10 @@
   <img class="cover-photo" src="./cover.jpeg" alt="The Beach House" />
   <div class="cover-overlay"></div>
   <div class="cover-top">
-    <div class="glide-mark">
+    <div class="beacon-mark">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
     </div>
-    <span class="cover-year">2025</span>
-  </div>
+</div>
 
   <div class="cover-body">
     <p class="cover-eyebrow">Guest Book</p>
@@ -1868,7 +2033,7 @@
   </div>
 
   <div class="cover-bottom">
-    <p class="cover-property">Rockaway Beach, OR<br>Glide Property</p>
+    <p class="cover-property">Rockaway Beach, OR<br>Beacon Property</p>
     <div class="scroll-hint">
       <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
       scroll
@@ -1906,12 +2071,12 @@
     <div class="wifi-block">
       <div class="wifi-item">
         <p class="wifi-label">Network</p>
-        <p class="wifi-value">BeachHouse_5G</p>
+        <p class="wifi-value">PacificPearl</p>
       </div>
       <div class="wifi-item">
         <p class="wifi-label">Password</p>
-        <p class="wifi-value">sunshine2024</p>
-        <button class="copy-btn" onclick="navigator.clipboard.writeText('sunshine2024').then(()=>{this.textContent='Copied ✓';setTimeout(()=>this.textContent='Copy password',1800)})">Copy password</button>
+        <p class="wifi-value">The6Pacific9Pearl5</p>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText('The6Pacific9Pearl5').then(()=>{this.textContent='Copied ✓';setTimeout(()=>this.textContent='Copy password',1800)})">Copy password</button>
       </div>
     </div>
   </div>
@@ -1927,9 +2092,42 @@
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
   </button>
   <div class="chapter-body" id="weather-body">
-    <p class="weather-condition" id="wx-condition">—</p>
-    <p class="weather-temp" id="wx-temp"><sup>°</sup></p>
-    <p class="weather-feel" id="wx-feel">Loading weather...</p>
+    <div class="weather-top">
+      <div class="weather-primary">
+        <p class="weather-condition" id="wx-condition">—</p>
+        <p class="weather-temp" id="wx-temp"><sup>°</sup></p>
+        <p class="weather-feel" id="wx-feel">Loading weather...</p>
+      </div>
+
+      <div class="weather-sidecard" aria-label="Upcoming conditions preview">
+        <p class="weather-sidecard-title">Conditions ahead</p>
+        <div class="weather-mini-grid" id="wx-mini-grid">
+          <div class="weather-mini-item">
+            <div class="weather-mini-label">Now</div>
+            <div class="weather-mini-icon">·</div>
+            <div class="weather-mini-temp">—</div>
+            <div class="weather-mini-note">Current</div>
+          </div>
+          <div class="weather-mini-item">
+            <div class="weather-mini-label">Later</div>
+            <div class="weather-mini-icon">·</div>
+            <div class="weather-mini-temp">—</div>
+            <div class="weather-mini-note">Upcoming</div>
+          </div>
+          <div class="weather-mini-item">
+            <div class="weather-mini-label">Tonight</div>
+            <div class="weather-mini-icon">·</div>
+            <div class="weather-mini-temp">—</div>
+            <div class="weather-mini-note">Later on</div>
+          </div>
+        </div>
+        <div class="weather-mini-strip">
+          <span>Range<strong id="wx-mini-range">—</strong></span>
+          <span>Trend<strong id="wx-mini-trend">—</strong></span>
+        </div>
+      </div>
+    </div>
+
     <div class="forecast-row" id="wx-forecast">
       <div class="forecast-day"><p class="forecast-label">—</p><p class="forecast-icon">·</p><p class="forecast-temp">—</p></div>
       <div class="forecast-day"><p class="forecast-label">—</p><p class="forecast-icon">·</p><p class="forecast-temp">—</p></div>
@@ -2325,7 +2523,7 @@
   <div class="colophon-mark">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
   </div>
-  <p class="colophon-name">Glide</p>
+  <p class="colophon-name">Beacon</p>
   <p class="colophon-sub">Curated hospitality systems</p>
 </footer>
 
@@ -2647,7 +2845,7 @@
       const url = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter`
         + `?station=${PROPERTY.noaaStation}`
         + `&product=predictions&datum=MLLW&time_zone=lst_ldt`
-        + `&interval=hilo&units=english&application=glide&format=json`
+        + `&interval=hilo&units=english&application=beacon&format=json`
         + `&begin_date=${dateStr}&range=48`;
 
       const res = await fetch(url);
@@ -2664,16 +2862,20 @@
 
       const container = document.getElementById('tides-data');
       const nowTs = propertyPseudoNowMs();
-      const upcomingRows = predictions.filter(p => p.ts >= nowTs).slice(0, 6);
-      container.innerHTML = upcomingRows.map(p => {
-        const type = p.type === 'H' ? 'High tide' : 'Low tide';
-        const time = fmt12noaa(p.raw);
-        const ht = p.value.toFixed(1);
-        return `<div class="data-row">
-          <span class="data-key">${type}</span>
-          <span class="data-val">${time} <small>${ht} ft</small></span>
-        </div>`;
-      }).join('');
+      const listEndTs = nowTs + 16 * 60 * 60 * 1000;
+      const upcomingRows = predictions.filter(p => p.ts >= nowTs && p.ts <= listEndTs);
+
+      container.innerHTML = upcomingRows.length
+        ? upcomingRows.map(p => {
+            const type = p.type === 'H' ? 'High tide' : 'Low tide';
+            const time = fmt12noaa(p.raw);
+            const ht = p.value.toFixed(1);
+            return `<div class="data-row">
+              <span class="data-key">${type}</span>
+              <span class="data-val">${time} <small>${ht} ft</small></span>
+            </div>`;
+          }).join('')
+        : '<div class="data-row"><span class="data-key">Upcoming tides</span><span class="data-val" style="font-size:14px;font-family:Jost">None within 16 hours</span></div>';
 
       renderTideVisual(predictions);
     } catch (e) {
@@ -2698,6 +2900,27 @@
       document.getElementById('wx-temp').innerHTML = `${Math.round(cur.main.temp)}<sup>°</sup>`;
       document.getElementById('wx-feel').textContent =
         `Feels like ${Math.round(cur.main.feels_like)}° · Wind ${Math.round(cur.wind.speed)} mph · Humidity ${cur.main.humidity}%`;
+
+      const miniItems = Array.from(document.querySelectorAll('#wx-mini-grid .weather-mini-item'));
+      const miniForecast = [
+        { label: 'Now', note: cur.weather?.[0]?.main || 'Current', item: cur },
+        { label: fore.list[1] ? fmt12utc(new Date(fore.list[1].dt * 1000)) : 'Later', note: fore.list[1]?.weather?.[0]?.main || 'Upcoming', item: fore.list[1] || cur },
+        { label: fore.list[3] ? fmt12utc(new Date(fore.list[3].dt * 1000)) : 'Tonight', note: fore.list[3]?.weather?.[0]?.main || 'Later on', item: fore.list[3] || cur }
+      ];
+
+      miniItems.forEach((el, i) => {
+        const block = miniForecast[i];
+        if (!block) return;
+        el.querySelector('.weather-mini-label').textContent = block.label;
+        el.querySelector('.weather-mini-icon').textContent = weatherIcon(block.item.weather?.[0]?.id || 800);
+        el.querySelector('.weather-mini-temp').textContent = `${Math.round(block.item.main?.temp ?? cur.main.temp)}°`;
+        el.querySelector('.weather-mini-note').textContent = block.note;
+      });
+
+      const sampleTemps = miniForecast.map(b => Math.round(b.item.main?.temp ?? cur.main.temp));
+      document.getElementById('wx-mini-range').textContent = `${Math.min(...sampleTemps)}°–${Math.max(...sampleTemps)}°`;
+      const trendDiff = sampleTemps[sampleTemps.length - 1] - sampleTemps[0];
+      document.getElementById('wx-mini-trend').textContent = trendDiff > 1 ? 'Warming' : trendDiff < -1 ? 'Cooling' : 'Steady';
 
       const days = {};
       const tzOffsetMs = (fore.city?.timezone || 0) * 1000;
