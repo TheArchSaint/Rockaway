@@ -18,6 +18,7 @@
       noaaStation: "9437540",
       weatherEndpoint: "https://rockaway-api.jarensasaint.workers.dev/weather",
       restaurantEndpoint: "https://rockaway-api.jarensasaint.workers.dev/restaurants",
+      exploreEndpoint: "https://rockaway-api.jarensasaint.workers.dev/explore",
     };
     // ══════════════════════════════════════════════
   </script>
@@ -1776,28 +1777,49 @@
   </button>
   <div class="chapter-body" id="explore-body">
     <p class="chapter-intro">The best of the area, handpicked for guests who want more than the obvious.</p>
-    <ul class="place-list">
-      <li class="place-item has-thumb">
+    <p id="google-explore-note" style="font-size:11px;color:#777;margin:-16px 0 20px;line-height:1.5">Curated by your host · loading live details from Google Maps…</p>
+    <ul class="place-list" id="explore-list">
+      <li class="place-item has-thumb" data-place-query="Twin Rocks, Rockaway Beach, OR">
         <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div><p class="place-name">Cape Disappointment</p><p class="place-note">Historic lighthouse, dramatic headland views — 4 mi</p></div>
+        <div><p class="place-name">Twin Rocks</p><p class="place-note">Rockaway's iconic offshore sea stacks, especially beautiful near sunset</p></div>
         <span class="place-tag">Views</span>
       </li>
-      <li class="place-item has-thumb">
+      <li class="place-item has-thumb" data-place-query="Rockaway Big Tree Trailhead, Rockaway Beach, OR">
         <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div><p class="place-name">Willapa Bay Oysters</p><p class="place-note">Buy direct from the farm, shuck on the deck — 12 mi</p></div>
-        <span class="place-tag">Local</span>
-      </li>
-      <li class="place-item has-thumb">
-        <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div><p class="place-name">Leadbetter Point</p><p class="place-note">Remote dune hike, migratory birds, solitude — 18 mi</p></div>
+        <div><p class="place-name">Rockaway Big Tree Trailhead</p><p class="place-note">An easy forest walk and boardwalk leading to an enormous old-growth cedar</p></div>
         <span class="place-tag">Nature</span>
       </li>
-      <li class="place-item has-thumb">
+      <li class="place-item has-thumb" data-place-query="Oregon Coast Scenic Railroad Rockaway Beach Station, Rockaway Beach, OR">
         <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-        <div><p class="place-name">Oysterville</p><p class="place-note">Historic National Register village, 1850s charm — 14 mi</p></div>
-        <span class="place-tag">History</span>
+        <div><p class="place-name">Oregon Coast Scenic Railroad</p><p class="place-note">Seasonal coastal train rides departing from the heart of Rockaway Beach</p></div>
+        <span class="place-tag">Family</span>
+      </li>
+      <li class="place-item has-thumb" data-place-query="Tillamook Creamery, Tillamook, OR">
+        <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div><p class="place-name">Tillamook Creamery</p><p class="place-note">A self-guided creamery tour, cheese samples, food hall and ice cream</p></div>
+        <span class="place-tag">Rainy Day</span>
+      </li>
+      <li class="place-item has-thumb" data-place-query="Cape Meares Lighthouse, Tillamook, OR">
+        <div class="place-thumb-placeholder"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div><p class="place-name">Cape Meares Lighthouse</p><p class="place-note">A historic lighthouse with sweeping ocean views and short nearby trails</p></div>
+        <span class="place-tag">Scenic Drive</span>
       </li>
     </ul>
+    <a class="all-restaurants-link"
+       href="https://www.google.com/maps/search/?api=1&amp;query=things%20to%20do%20near%20Rockaway%20Beach%2C%20OR"
+       target="_blank" rel="noopener noreferrer"
+       aria-label="View more things to do near Rockaway Beach on Google Maps">
+      <span class="all-restaurants-link-main">
+        <span class="all-restaurants-link-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </span>
+        <span>
+          <span class="all-restaurants-link-label">Explore more nearby attractions</span>
+          <span class="all-restaurants-link-sub">Open Google Maps</span>
+        </span>
+      </span>
+      <span class="all-restaurants-link-arrow">↗</span>
+    </a>
   </div>
 </section>
 
@@ -2190,6 +2212,33 @@
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
 
+  function applyPlaceThumbnail(item, place, fallbackAlt) {
+    const placeholder = item.querySelector('.place-thumb-placeholder');
+    if (!placeholder || !place.photoUrl) return;
+
+    const img = document.createElement('img');
+    img.className = 'place-thumb';
+    img.alt = place.displayName ? `${place.displayName} photo` : fallbackAlt;
+    img.loading = 'lazy';
+    img.src = place.photoUrl;
+    img.onerror = () => {
+      console.warn('Place photo failed to load for', place.displayName || place.query);
+    };
+
+    if (place.photoGoogleMapsUri) {
+      const photoLink = document.createElement('a');
+      photoLink.className = 'place-photo-link';
+      photoLink.href = place.photoGoogleMapsUri;
+      photoLink.target = '_blank';
+      photoLink.rel = 'noopener noreferrer';
+      photoLink.title = 'View photo on Google Maps';
+      photoLink.appendChild(img);
+      placeholder.replaceWith(photoLink);
+    } else {
+      placeholder.replaceWith(img);
+    }
+  }
+
   async function loadGoogleRestaurantDetails() {
     const note = document.getElementById('google-places-note');
     const endpoint = PROPERTY.restaurantEndpoint;
@@ -2209,32 +2258,7 @@
         const noteEl = item.querySelector('.place-note');
         if (place.displayName && nameEl) nameEl.textContent = place.displayName;
 
-        // Load the first Google Places photo through Cloudflare so the API key stays private.
-        if (place.photoName) {
-          const placeholder = item.querySelector('.place-thumb-placeholder');
-          if (placeholder) {
-            const photoBase = endpoint.replace(/\/restaurants\/?$/, '');
-            const img = document.createElement('img');
-            img.className = 'place-thumb';
-            img.alt = place.displayName ? `${place.displayName} photo` : 'Restaurant photo';
-            img.loading = 'lazy';
-            img.src = `${photoBase}/place-photo?name=${encodeURIComponent(place.photoName)}`;
-
-            // Google requires direct access to the source photo on Google Maps.
-            if (place.photoGoogleMapsUri) {
-              const photoLink = document.createElement('a');
-              photoLink.className = 'place-photo-link';
-              photoLink.href = place.photoGoogleMapsUri;
-              photoLink.target = '_blank';
-              photoLink.rel = 'noopener noreferrer';
-              photoLink.title = 'View photo on Google Maps';
-              photoLink.appendChild(img);
-              placeholder.replaceWith(photoLink);
-            } else {
-              placeholder.replaceWith(img);
-            }
-          }
-        }
+        applyPlaceThumbnail(item, place, 'Restaurant photo');
 
         const bits = [];
         if (place.formattedAddress) bits.push(place.formattedAddress.replace(', USA','').replace(', United States',''));
@@ -2288,6 +2312,78 @@
     }
   }
 
+
+  async function loadGoogleExploreDetails() {
+    const note = document.getElementById('google-explore-note');
+    const endpoint = PROPERTY.exploreEndpoint;
+    if (!endpoint) return;
+
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) throw new Error(`Explore API returned ${response.status}`);
+      const data = await response.json();
+      const places = Array.isArray(data.places) ? data.places : [];
+
+      places.forEach(place => {
+        const item = document.querySelector(`#explore-list .place-item[data-place-query="${CSS.escape(place.query || '')}"]`);
+        if (!item) return;
+
+        const nameEl = item.querySelector('.place-name');
+        if (place.displayName && nameEl) nameEl.textContent = place.displayName;
+
+        applyPlaceThumbnail(item, place, 'Attraction photo');
+
+        const detailBlock = item.querySelector('.place-name')?.parentElement;
+        let meta = item.querySelector('.place-meta');
+        if (!meta) {
+          meta = document.createElement('div');
+          meta.className = 'place-meta';
+          detailBlock?.appendChild(meta);
+        }
+        meta.innerHTML = '';
+
+        if (typeof place.rating === 'number') {
+          const rating = document.createElement('span');
+          rating.className = 'place-rating';
+          rating.textContent = `★ ${place.rating.toFixed(1)}${place.userRatingCount ? ` (${Number(place.userRatingCount).toLocaleString()})` : ''}`;
+          meta.appendChild(rating);
+        }
+
+        if (typeof place.openNow === 'boolean') {
+          const status = document.createElement('span');
+          status.className = `place-status ${place.openNow ? 'open' : 'closed'}`;
+          status.textContent = place.openNow ? 'Open now' : 'Closed now';
+          meta.appendChild(status);
+        }
+
+        if (place.location?.latitude != null && place.location?.longitude != null) {
+          const miles = straightLineMiles(PROPERTY.lat, PROPERTY.lng, place.location.latitude, place.location.longitude);
+          const distance = document.createElement('span');
+          distance.textContent = `${miles.toFixed(1)} mi away`;
+          meta.appendChild(distance);
+        }
+
+        if (place.googleMapsUri) {
+          let link = item.querySelector('.place-maps');
+          if (!link) {
+            link = document.createElement('a');
+            link.className = 'place-maps';
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = 'View on Google Maps ↗';
+            detailBlock?.appendChild(link);
+          }
+          link.href = place.googleMapsUri;
+        }
+      });
+
+      if (note) note.textContent = 'Curated by your host · ratings, hours and location details supplied by Google Maps.';
+    } catch (err) {
+      console.warn('Explore details could not load:', err);
+      if (note) note.textContent = 'Curated by your host. Live Google Maps details are temporarily unavailable.';
+    }
+  }
+
   // ── CATEGORY FILTERING ───────────────────────────────────────────────
   function filterEats(cat, btn) {
     // Update active tag
@@ -2310,6 +2406,7 @@
   }
 
   loadGoogleRestaurantDetails();
+  loadGoogleExploreDetails();
 
   // ── ACCORDION ────────────────────────────────────────────────────────
   function toggleChapter(id) {
