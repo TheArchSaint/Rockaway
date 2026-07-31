@@ -2405,8 +2405,30 @@
     });
   }
 
-  loadGoogleRestaurantDetails();
-  loadGoogleExploreDetails();
+  // Google Places data is loaded only when its section is opened for the first time.
+  // Reopening the section does not make another API request during the same page visit.
+  const sectionLoadState = {
+    eats: false,
+    explore: false
+  };
+
+  function loadChapterData(id) {
+    if (id === 'eats' && !sectionLoadState.eats) {
+      sectionLoadState.eats = true;
+      loadGoogleRestaurantDetails().catch(() => {
+        // Allow a later retry if the first request fails.
+        sectionLoadState.eats = false;
+      });
+    }
+
+    if (id === 'explore' && !sectionLoadState.explore) {
+      sectionLoadState.explore = true;
+      loadGoogleExploreDetails().catch(() => {
+        // Allow a later retry if the first request fails.
+        sectionLoadState.explore = false;
+      });
+    }
+  }
 
   // ── ACCORDION ────────────────────────────────────────────────────────
   function toggleChapter(id) {
@@ -2417,6 +2439,7 @@
     // open this one if it was closed
     if (!isOpen) {
       el.classList.add('open');
+      loadChapterData(id);
       setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
     }
     syncAccordionState();
@@ -2428,6 +2451,7 @@
     const el = document.getElementById(id);
     if (el) {
       el.classList.add('open');
+      loadChapterData(id);
       setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
     }
     syncAccordionState();
@@ -2476,8 +2500,9 @@
       // specific disc scan — open only that section
       openChapter(hash);
     } else {
-      // welcome book QR or direct URL — open everything
-      document.querySelectorAll('.chapter').forEach(c => c.classList.add('open'));
+      // Direct visits start with the chapters closed. Paid Places requests are
+      // not made until the guest intentionally opens Eats or Explore.
+      document.querySelectorAll('.chapter').forEach(c => c.classList.remove('open'));
     }
     syncAccordionState();
   });
