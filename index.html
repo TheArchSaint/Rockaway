@@ -1516,6 +1516,275 @@
       flex-shrink: 0;
     }
 
+  
+
+    /* ── DAYLIGHT / TIDE VISUALS ── */
+    .visual-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 20px 18px;
+      margin-top: 24px;
+      box-shadow: 0 4px 18px rgba(43,58,82,0.08);
+      overflow: hidden;
+    }
+
+    .visual-card.sun-visual {
+      background: linear-gradient(145deg, #fff 0%, #fff9ed 100%);
+    }
+
+    .visual-card.tide-visual {
+      background: linear-gradient(145deg, #fff 0%, #eef3f5 100%);
+    }
+
+    .visual-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .visual-kicker {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .visual-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      line-height: 1.0;
+      color: var(--navy);
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .visual-summary {
+      text-align: right;
+      font-size: 11px;
+      color: #777;
+      line-height: 1.5;
+      min-width: 110px;
+    }
+
+    .visual-summary strong {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--navy);
+    }
+
+    .sun-track-wrap {
+      position: relative;
+      padding: 48px 0 42px;
+      margin: 0 2px;
+    }
+
+    .sun-track {
+      position: relative;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        #667188 0%,
+        #808a9d 12%,
+        #8d95a6 50%,
+        #808a9d 88%,
+        #667188 100%);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.14);
+    }
+
+    .sun-daylight-segment {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      z-index: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        #cbb05d 0%,
+        #e8c96f 28%,
+        #efd37d 52%,
+        #ebb96c 80%,
+        #d68f5b 100%);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.18) inset;
+    }
+
+    .sun-marker {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .sun-marker::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: -6px;
+      width: 2px;
+      height: 20px;
+      transform: translateX(-50%);
+      background: rgba(43,58,82,0.32);
+    }
+
+    .sun-marker-label {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.3;
+      color: #777;
+    }
+
+    .sun-marker-label strong {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--navy);
+    }
+
+    .sun-marker.top .sun-marker-label { bottom: 20px; }
+    .sun-marker.bottom .sun-marker-label { top: 20px; }
+
+    .sun-now-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+    }
+
+    .sun-now-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--navy);
+      border: 4px solid white;
+      box-shadow: 0 2px 10px rgba(43,58,82,0.24);
+    }
+
+    .sun-now-label {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      border-radius: 999px;
+      background: var(--navy);
+      color: white;
+      padding: 4px 9px;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .visual-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+      font-size: 12px;
+      color: #777;
+    }
+
+    .visual-footer strong {
+      color: var(--navy);
+      font-weight: 500;
+    }
+
+    .tide-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--navy);
+      color: white;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+
+    .tide-status-pill::before {
+      content: attr(data-arrow);
+      color: var(--gold);
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .tide-chart-wrap {
+      position: relative;
+      height: 208px;
+      margin: 0 -6px 8px;
+    }
+
+    .tide-chart-wrap svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      display: block;
+    }
+
+    .tide-grid-line {
+      stroke: rgba(43,58,82,0.08);
+      stroke-width: 1;
+    }
+
+    .tide-line {
+      fill: none;
+      stroke: var(--navy);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .tide-area {
+      fill: url(#tideFill);
+    }
+
+    .tide-point {
+      fill: white;
+      stroke: var(--navy);
+      stroke-width: 2.5;
+    }
+
+    .tide-now-line {
+      stroke: var(--gold);
+      stroke-width: 2;
+      stroke-dasharray: 4 4;
+    }
+
+    .tide-now-dot {
+      fill: var(--gold);
+      stroke: white;
+      stroke-width: 4;
+    }
+
+    .tide-svg-label {
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      fill: #777;
+    }
+
+    .tide-svg-label.strong {
+      fill: var(--navy);
+      font-weight: 500;
+    }
+
+    @media (max-width: 520px) {
+      .visual-head { align-items: flex-end; }
+      .visual-summary strong { font-size: 19px; }
+      .visual-title { font-size: 24px; }
+      .sun-marker-label { font-size: 9px; }
+      .sun-marker-label strong { font-size: 10px; }
+      .visual-footer { flex-direction: column; gap: 6px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1613,7 +1882,7 @@
   <ul class="toc-list">
     <li class="toc-item"><a href="#wifi" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>Wifi</span><span class="toc-arrow">↓</span></a></li>
     <li class="toc-item"><a href="#weather" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>Weather</span><span class="toc-arrow">↓</span></a></li>
-    <li class="toc-item"><a href="#tides" class="toc-link"><span class="toc-name">Tides & Sunrise</span><span class="toc-arrow">↓</span></a></li>
+    <li class="toc-item"><a href="#tides" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5s2.5 2 5 2 2.5-2 5-2"/><path d="M2 12c.6.5 1.2 1 2.5 1C7 13 7 11 9.5 11s2.5 2 5 2 2.5-2 5-2"/><path d="M2 18c.6.5 1.2 1 2.5 1C7 19 7 17 9.5 17s2.5 2 5 2 2.5-2 5-2"/></svg>Tides</span><span class="toc-arrow">↓</span></a></li>
     <li class="toc-item"><a href="#eats" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="18" y2="20"/><path d="M6 6v4a4 4 0 0 0 4 4v6"/><line x1="6" y1="6" x2="10" y2="6"/><line x1="6" y1="10" x2="10" y2="10"/></svg>Eats</span><span class="toc-arrow">↓</span></a></li>
     <li class="toc-item"><a href="#explore" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>Explore</span><span class="toc-arrow">↓</span></a></li>
     <li class="toc-item"><a href="#beaches" class="toc-link"><span class="toc-name"><svg class="toc-icon" viewBox="0 0 24 24"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="1" y1="18" x2="3" y2="18"/></svg>Beaches</span><span class="toc-arrow">↓</span></a></li>
@@ -1668,6 +1937,34 @@
       <div class="forecast-day"><p class="forecast-label">—</p><p class="forecast-icon">·</p><p class="forecast-temp">—</p></div>
       <div class="forecast-day"><p class="forecast-label">—</p><p class="forecast-icon">·</p><p class="forecast-temp">—</p></div>
     </div>
+
+    <div class="visual-card sun-visual" id="sun-visual-card">
+      <div class="visual-head">
+        <div>
+          <p class="visual-kicker">Daylight</p>
+          <h3 class="visual-title">Sun schedule</h3>
+        </div>
+        <div class="visual-summary">
+          Next moment
+          <strong id="sun-next-name">—</strong>
+          <span id="sun-next-countdown">Loading…</span>
+        </div>
+      </div>
+
+      <div class="sun-track-wrap">
+        <div class="sun-track" id="sun-track">
+          <div class="sun-now-marker" id="sun-now-marker" style="left:50%">
+            <div class="sun-now-label">Now · <span id="sun-now-time">—</span></div>
+            <div class="sun-now-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="visual-footer">
+        <span>Upcoming sunrise: <strong id="sun-next-sunrise">—</strong></span>
+        <span>Next golden hour: <strong id="sun-next-golden">—</strong></span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1675,20 +1972,39 @@
 <section class="chapter" id="tides">
   <button type="button" class="chapter-header" onclick="toggleChapter('tides')" aria-expanded="false" aria-controls="tides-body">
     <div class="chapter-header-left">
-      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5s2.5 2 5 2 2.5-2 5-2"/><path d="M2 12c.6.5 1.2 1 2.5 1C7 13 7 11 9.5 11s2.5 2 5 2 2.5-2 5-2"/><path d="M2 18c.6.5 1.2 1 2.5 1C7 19 7 17 9.5 17s2.5 2 5 2 2.5-2 5-2"/></svg>03 &nbsp;—&nbsp; Tides &amp; Sunrise</p>
+      <p class="chapter-number"><svg class="chapter-icon" viewBox="0 0 24 24"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5s2.5 2 5 2 2.5-2 5-2"/><path d="M2 12c.6.5 1.2 1 2.5 1C7 13 7 11 9.5 11s2.5 2 5 2 2.5-2 5-2"/><path d="M2 18c.6.5 1.2 1 2.5 1C7 19 7 17 9.5 17s2.5 2 5 2 2.5-2 5-2"/></svg>03 &nbsp;—&nbsp; Tides</p>
       <h2 class="chapter-title">The<br><em>rhythm<br>of the sea.</em></h2>
     </div>
     <div class="chapter-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
   </button>
   <div class="chapter-body" id="tides-body">
     <p class="chapter-intro">Plan your beach time around the tides. Low tide is the best moment to explore tide pools and walk the exposed shore.</p>
+
+    <div class="visual-card tide-visual" id="tide-visual-card">
+      <div class="visual-head">
+        <div>
+          <p class="visual-kicker">Tide now</p>
+          <h3 class="visual-title">The sea at a glance</h3>
+        </div>
+        <div class="visual-summary">
+          Current tide
+          <strong id="tide-current-height">—</strong>
+          <span class="tide-status-pill" id="tide-status-pill" data-arrow="↕">Loading</span>
+        </div>
+      </div>
+
+      <div class="tide-chart-wrap" id="tide-chart-wrap">
+        <svg id="tide-chart" viewBox="0 0 620 210" role="img" aria-label="Tide curve showing current position and upcoming high and low tides."></svg>
+      </div>
+
+      <div class="visual-footer">
+        <span>Next tide: <strong id="tide-next-summary">—</strong></span>
+        <span>Time until: <strong id="tide-next-countdown">—</strong></span>
+      </div>
+    </div>
+
     <div id="tides-data">
       <div class="data-row"><span class="data-key">Loading</span><span class="data-val">—</span></div>
-    </div>
-    <div style="margin-top:24px;border-top:1px solid var(--rule);padding-top:24px">
-      <div class="data-row"><span class="data-key">Sunrise</span><span class="data-val" id="sun-rise">—</span></div>
-      <div class="data-row"><span class="data-key">Sunset</span><span class="data-val" id="sun-set">—</span></div>
-      <div class="data-row"><span class="data-key">Golden hour</span><span class="data-val" id="sun-golden">—</span></div>
     </div>
   </div>
 </section>
@@ -2046,6 +2362,45 @@
 
   function toF(k) { return Math.round((k - 273.15) * 9/5 + 32); }
 
+  function getZonedParts(date = new Date(), timeZone = PROPERTY.timeZone) {
+    const parts = Object.fromEntries(
+      new Intl.DateTimeFormat('en-US', {
+        timeZone,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      }).formatToParts(date).filter(p => p.type !== 'literal').map(p => [p.type, p.value])
+    );
+    return {
+      year: Number(parts.year),
+      month: Number(parts.month),
+      day: Number(parts.day),
+      hour: Number(parts.hour),
+      minute: Number(parts.minute),
+      second: Number(parts.second)
+    };
+  }
+
+  function zonedMinutes(date = new Date(), timeZone = PROPERTY.timeZone) {
+    const p = getZonedParts(date, timeZone);
+    return p.hour * 60 + p.minute;
+  }
+
+  function fmtDuration(totalMinutes) {
+    if (!isFinite(totalMinutes)) return '—';
+    const mins = Math.max(0, Math.round(totalMinutes));
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h === 0) return `${m} min`;
+    return `${h} hr ${m} min`;
+  }
+
+  const sunScheduleState = {
+    sunrise: null,
+    sunset: null,
+    golden: null,
+    timerStarted: false
+  };
+
   // ── SUNRISE / SUNSET ─────────────────────────────────────────────────
   async function loadSunriseSunset() {
     try {
@@ -2054,75 +2409,296 @@
       const data = await res.json();
       if (data.status !== 'OK') throw new Error('API error');
 
-      const rise   = new Date(data.results.sunrise);
-      const set    = new Date(data.results.sunset);
-      const golden = new Date(set.getTime() - 30 * 60000); // 30 min before sunset
+      const rise = new Date(data.results.sunrise);
+      const set = new Date(data.results.sunset);
+      const golden = new Date(set.getTime() - 30 * 60000);
 
-      document.getElementById('sun-rise').textContent   = fmt12utc(rise);
-      document.getElementById('sun-set').textContent    = fmt12utc(set);
-      document.getElementById('sun-golden').textContent = fmt12utc(golden);
-    } catch(e) {
-      ['sun-rise','sun-set','sun-golden'].forEach(id => document.getElementById(id).textContent = 'Unavailable');
+      sunScheduleState.sunrise = rise;
+      sunScheduleState.sunset = set;
+      sunScheduleState.golden = golden;
+      renderSunSchedule();
+
+      if (!sunScheduleState.timerStarted) {
+        sunScheduleState.timerStarted = true;
+        setInterval(renderSunSchedule, 60000);
+      }
+    } catch (e) {
+      document.getElementById('sun-next-name').textContent = 'Unavailable';
+      document.getElementById('sun-next-countdown').textContent = 'Unable to load';
+      document.getElementById('sun-next-sunrise').textContent = 'Unavailable';
+      document.getElementById('sun-next-golden').textContent = 'Unavailable';
     }
+  }
+
+  function renderSunSchedule() {
+    const { sunrise, sunset, golden } = sunScheduleState;
+    if (!sunrise || !sunset || !golden) return;
+
+    const track = document.getElementById('sun-track');
+    const nowMarker = document.getElementById('sun-now-marker');
+    const nowTime = document.getElementById('sun-now-time');
+    const nextName = document.getElementById('sun-next-name');
+    const nextCountdown = document.getElementById('sun-next-countdown');
+    const nextSunriseEl = document.getElementById('sun-next-sunrise');
+    const nextGoldenEl = document.getElementById('sun-next-golden');
+    if (!track || !nowMarker) return;
+
+    track.querySelectorAll('.sun-marker, .sun-daylight-segment').forEach(el => el.remove());
+
+    const now = new Date();
+    const hourMs = 60 * 60 * 1000;
+    const windowStart = new Date(now.getTime() - 12 * hourMs);
+    const windowEnd = new Date(now.getTime() + 12 * hourMs);
+    const windowSpan = windowEnd.getTime() - windowStart.getTime();
+
+    const baseEvents = [
+      { label: 'Sunrise', when: sunrise, type: 'sunrise' },
+      { label: 'Golden hour', when: golden, type: 'golden' },
+      { label: 'Sunset', when: sunset, type: 'sunset' }
+    ];
+
+    const events = [];
+    [-1, 0, 1, 2].forEach(dayOffset => {
+      baseEvents.forEach(ev => {
+        events.push({
+          label: ev.label,
+          type: ev.type,
+          when: new Date(ev.when.getTime() + dayOffset * 24 * hourMs)
+        });
+      });
+
+      const daySunrise = new Date(sunrise.getTime() + dayOffset * 24 * hourMs);
+      const daySunset = new Date(sunset.getTime() + dayOffset * 24 * hourMs);
+      const segStart = Math.max(windowStart.getTime(), daySunrise.getTime());
+      const segEnd = Math.min(windowEnd.getTime(), daySunset.getTime());
+      if (segEnd > segStart) {
+        const seg = document.createElement('div');
+        seg.className = 'sun-daylight-segment';
+        seg.style.left = `${((segStart - windowStart.getTime()) / windowSpan) * 100}%`;
+        seg.style.width = `${((segEnd - segStart) / windowSpan) * 100}%`;
+        track.appendChild(seg);
+      }
+    });
+    events.sort((a, b) => a.when - b.when);
+
+    const visibleEvents = events.filter(ev => ev.when >= windowStart && ev.when <= windowEnd);
+    visibleEvents.forEach((ev, idx) => {
+      const pct = ((ev.when.getTime() - windowStart.getTime()) / windowSpan) * 100;
+      const el = document.createElement('div');
+      el.className = `sun-marker ${idx % 2 === 0 ? 'top' : 'bottom'}`;
+      el.style.left = `${pct}%`;
+      el.innerHTML = `<div class="sun-marker-label"><strong>${ev.label}</strong>${fmt12utc(ev.when)}</div>`;
+      track.appendChild(el);
+    });
+
+    nowMarker.style.left = '50%';
+    nowTime.textContent = fmt12utc(now);
+
+    const upcomingEvents = events.filter(ev => ev.when > now);
+    const nextEvent = upcomingEvents[0] || null;
+    const nextSunrise = upcomingEvents.find(ev => ev.type === 'sunrise') || null;
+    const nextGolden = upcomingEvents.find(ev => ev.type === 'golden') || null;
+
+    if (nextEvent) {
+      const diffMin = Math.round((nextEvent.when.getTime() - now.getTime()) / 60000);
+      nextName.textContent = nextEvent.label;
+      nextCountdown.textContent = `in ${fmtDuration(diffMin)}`;
+    } else {
+      nextName.textContent = '—';
+      nextCountdown.textContent = '—';
+    }
+
+    nextSunriseEl.textContent = nextSunrise ? fmt12utc(nextSunrise.when) : '—';
+    nextGoldenEl.textContent = nextGolden ? fmt12utc(nextGolden.when) : '—';
+  }
+
+  function propertyPseudoNowMs() {
+    const p = getZonedParts(new Date(), PROPERTY.timeZone);
+    return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+  }
+
+  function parseNoaaPseudoMs(dateStr) {
+    const [datePart, timePart] = dateStr.split(' ');
+    const [y, m, d] = datePart.split('-').map(Number);
+    const [hh, mm] = timePart.split(':').map(Number);
+    return Date.UTC(y, m - 1, d, hh, mm, 0);
+  }
+
+  function buildSmoothPath(points) {
+    if (!points.length) return '';
+    let d = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i - 1] || points[i];
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const p3 = points[i + 2] || p2;
+      const cp1x = p1.x + (p2.x - p0.x) / 6;
+      const cp1y = p1.y + (p2.y - p0.y) / 6;
+      const cp2x = p2.x - (p3.x - p1.x) / 6;
+      const cp2y = p2.y - (p3.y - p1.y) / 6;
+      d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+    }
+    return d;
+  }
+
+  function renderTideVisual(predictions) {
+    const svg = document.getElementById('tide-chart');
+    const currentHeightEl = document.getElementById('tide-current-height');
+    const statusPill = document.getElementById('tide-status-pill');
+    const nextSummary = document.getElementById('tide-next-summary');
+    const nextCountdown = document.getElementById('tide-next-countdown');
+    if (!svg || !predictions.length) return;
+
+    const left = 36, right = 600, top = 22, bottom = 190;
+    const vals = predictions.map(p => p.value);
+    const minVal = Math.min(...vals) - 0.5;
+    const maxVal = Math.max(...vals) + 0.5;
+
+    const nowTs = propertyPseudoNowMs();
+    const hourMs = 60 * 60 * 1000;
+    const windowStartTs = nowTs - 12 * hourMs;
+    const windowEndTs = nowTs + 12 * hourMs;
+    const spanTs = windowEndTs - windowStartTs;
+    const scaleX = ts => left + ((ts - windowStartTs) / spanTs) * (right - left);
+    const scaleY = v => bottom - ((v - minVal) / (maxVal - minVal || 1)) * (bottom - top);
+
+    const visible = predictions.filter(p => p.ts >= windowStartTs && p.ts <= windowEndTs);
+    const beforeWindow = [...predictions].filter(p => p.ts < windowStartTs).pop() || visible[0] || predictions[0];
+    const afterWindow = predictions.find(p => p.ts > windowEndTs) || visible[visible.length - 1] || predictions[predictions.length - 1];
+    const pathPreds = [beforeWindow, ...visible, afterWindow].filter((p, i, arr) => arr.findIndex(x => x.ts === p.ts && x.type === p.type) === i).sort((a,b)=>a.ts-b.ts);
+
+    const points = pathPreds.map(p => ({ x: scaleX(p.ts), y: scaleY(p.value), p }));
+    const linePath = buildSmoothPath(points);
+    const areaPath = `${linePath} L ${points[points.length - 1].x} ${bottom} L ${points[0].x} ${bottom} Z`;
+
+    let prev = predictions[0];
+    let next = predictions[predictions.length - 1];
+    for (let i = 0; i < predictions.length; i++) {
+      if (predictions[i].ts <= nowTs) prev = predictions[i];
+      if (predictions[i].ts > nowTs) { next = predictions[i]; break; }
+    }
+
+    let currentValue = prev.value;
+    let status = 'Steady';
+    if (next && next.ts !== prev.ts) {
+      const ratio = Math.max(0, Math.min(1, (nowTs - prev.ts) / (next.ts - prev.ts)));
+      const eased = (1 - Math.cos(Math.PI * ratio)) / 2;
+      currentValue = prev.value + (next.value - prev.value) * eased;
+      status = next.value > prev.value ? 'Rising' : 'Falling';
+    }
+
+    const nowX = left + (right - left) / 2;
+    const nowY = scaleY(currentValue);
+
+    let upcoming = predictions.find(p => p.ts > nowTs) || null;
+    if (upcoming) {
+      const kind = upcoming.type === 'H' ? 'High' : 'Low';
+      nextSummary.textContent = `${kind} ${fmt12noaa(upcoming.raw)} · ${upcoming.value.toFixed(1)} ft`;
+      nextCountdown.textContent = fmtDuration((upcoming.ts - nowTs) / 60000);
+    } else {
+      nextSummary.textContent = 'No upcoming tide';
+      nextCountdown.textContent = '—';
+    }
+
+    currentHeightEl.textContent = `${currentValue.toFixed(1)} ft`;
+    statusPill.textContent = status;
+    statusPill.setAttribute('data-arrow', status === 'Rising' ? '↗' : status === 'Falling' ? '↘' : '↕');
+
+    const grids = [top + 18, (top + bottom) / 2, bottom - 18].map(y =>
+      `<line class="tide-grid-line" x1="${left}" y1="${y}" x2="${right}" y2="${y}" />`
+    ).join('');
+
+    const labelPreds = visible;
+    const labels = labelPreds.map(ptp => {
+      const x = scaleX(ptp.ts);
+      const y = scaleY(ptp.value);
+      const kind = ptp.type === 'H' ? 'High' : 'Low';
+      const strongY = ptp.type === 'H' ? Math.max(18, y - 18) : Math.min(188, y + 24);
+      const weakY = ptp.type === 'H' ? Math.max(30, y - 5) : Math.min(202, y + 38);
+      return `
+        <circle class="tide-point" cx="${x}" cy="${y}" r="5" />
+        <text class="tide-svg-label strong" x="${x}" y="${strongY}" text-anchor="middle">${kind} ${ptp.value.toFixed(1)} ft</text>
+        <text class="tide-svg-label" x="${x}" y="${weakY}" text-anchor="middle">${fmt12noaa(ptp.raw)}</text>`;
+    }).join('');
+
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="tideFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8aa7b8" stop-opacity="0.42"/>
+          <stop offset="100%" stop-color="#8aa7b8" stop-opacity="0.04"/>
+        </linearGradient>
+      </defs>
+      ${grids}
+      <path class="tide-area" d="${areaPath}" />
+      <path class="tide-line" d="${linePath}" />
+      <line class="tide-now-line" x1="${nowX}" y1="${top}" x2="${nowX}" y2="${bottom}" />
+      <circle class="tide-now-dot" cx="${nowX}" cy="${nowY}" r="8" />
+      ${labels}
+      <text class="tide-svg-label strong" x="${Math.min(right - 8, nowX + 10)}" y="${Math.max(18, nowY - 10)}">NOW</text>
+    `;
   }
 
   // ── TIDES ─────────────────────────────────────────────────────────────
   async function loadTides() {
     try {
       const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: PROPERTY.timeZone, year:'numeric', month:'2-digit', day:'2-digit' }).formatToParts(new Date()).filter(p => p.type !== 'literal').map(p => [p.type,p.value]));
-      const y=parts.year, mo=parts.month, dy=parts.day;
+      const y = parts.year, mo = parts.month, dy = parts.day;
       const dateStr = `${y}${mo}${dy}`;
       const url = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter`
         + `?station=${PROPERTY.noaaStation}`
         + `&product=predictions&datum=MLLW&time_zone=lst_ldt`
         + `&interval=hilo&units=english&application=glide&format=json`
-        + `&begin_date=${dateStr}&range=24`;
+        + `&begin_date=${dateStr}&range=48`;
 
-      const res  = await fetch(url);
+      const res = await fetch(url);
       if (!res.ok) throw new Error(`Tide service returned ${res.status}`);
       const data = await res.json();
       if (!data.predictions) throw new Error('No tide data');
 
+      const predictions = data.predictions.map(p => ({
+        raw: p.t,
+        ts: parseNoaaPseudoMs(p.t),
+        value: parseFloat(p.v),
+        type: p.type
+      }));
+
       const container = document.getElementById('tides-data');
-      container.innerHTML = data.predictions.map(p => {
+      const nowTs = propertyPseudoNowMs();
+      const upcomingRows = predictions.filter(p => p.ts >= nowTs).slice(0, 6);
+      container.innerHTML = upcomingRows.map(p => {
         const type = p.type === 'H' ? 'High tide' : 'Low tide';
-        const time = fmt12noaa(p.t);
-        const ht   = parseFloat(p.v).toFixed(1);
+        const time = fmt12noaa(p.raw);
+        const ht = p.value.toFixed(1);
         return `<div class="data-row">
           <span class="data-key">${type}</span>
           <span class="data-val">${time} <small>${ht} ft</small></span>
         </div>`;
       }).join('');
-    } catch(e) {
+
+      renderTideVisual(predictions);
+    } catch (e) {
       document.getElementById('tides-data').innerHTML =
         '<div class="data-row"><span class="data-key">Tides</span><span class="data-val" style="font-size:14px;font-family:Jost">Unavailable</span></div>';
+      document.getElementById('tide-current-height').textContent = '—';
+      document.getElementById('tide-status-pill').textContent = 'Unavailable';
+      document.getElementById('tide-next-summary').textContent = 'Unavailable';
+      document.getElementById('tide-next-countdown').textContent = 'Unavailable';
     }
   }
-
   // ── WEATHER ───────────────────────────────────────────────────────────
   async function loadWeather() {
     try {
-      // Weather now comes through the Cloudflare Worker, so the OpenWeather
-      // API key never appears in this public HTML file.
       const foreRes = await fetch(PROPERTY.weatherEndpoint);
       if (!foreRes.ok) throw new Error(`Weather service returned ${foreRes.status}`);
       const fore = await foreRes.json();
       if (!Array.isArray(fore.list) || !fore.list.length) throw new Error('Forecast data missing');
 
-      // The Worker currently returns OpenWeather's 5-day / 3-hour forecast in
-      // imperial units. Use the nearest forecast point for the conditions card.
       const cur = fore.list[0];
       document.getElementById('wx-condition').textContent = cur.weather?.[0]?.main || 'Weather';
       document.getElementById('wx-temp').innerHTML = `${Math.round(cur.main.temp)}<sup>°</sup>`;
       document.getElementById('wx-feel').textContent =
         `Feels like ${Math.round(cur.main.feels_like)}° · Wind ${Math.round(cur.wind.speed)} mph · Humidity ${cur.main.humidity}%`;
 
-      // 5-day forecast
-
-      // Build a true daily forecast from all 3-hour readings.
-      // OpenWeather's dt_txt is UTC, so selecting "12:00" was actually
-      // showing an early-morning Rockaway Beach temperature. Group readings
-      // by Rockaway's local date, then show the day's low–high range.
       const days = {};
       const tzOffsetMs = (fore.city?.timezone || 0) * 1000;
 
@@ -2142,8 +2718,6 @@
         } else {
           days[dateKey].min = Math.min(days[dateKey].min, item.main.temp_min);
           days[dateKey].max = Math.max(days[dateKey].max, item.main.temp_max);
-
-          // Use the weather icon from the reading closest to local noon.
           const hourDistance = Math.abs(localHour - 12);
           if (hourDistance < days[dateKey].iconHourDistance) {
             days[dateKey].iconItem = item;
@@ -2156,15 +2730,14 @@
       Object.values(days).slice(0,5).forEach((day, i) => {
         if (!dayEls[i]) return;
         dayEls[i].querySelector('.forecast-label').textContent = dayName(day.dateKey + ' 12:00:00');
-        dayEls[i].querySelector('.forecast-icon').textContent  = weatherIcon(day.iconItem.weather[0].id);
-        dayEls[i].querySelector('.forecast-temp').textContent  = `${Math.round(day.min)}°–${Math.round(day.max)}°`;
+        dayEls[i].querySelector('.forecast-icon').textContent = weatherIcon(day.iconItem.weather[0].id);
+        dayEls[i].querySelector('.forecast-temp').textContent = `${Math.round(day.min)}°–${Math.round(day.max)}°`;
       });
-    } catch(e) {
+    } catch (e) {
       document.getElementById('wx-feel').textContent = 'Weather unavailable.';
     }
   }
-
-  // Weather, tides and sunrise/sunset are loaded only when their
+  // Weather, daylight, tides and Google Places data are loaded only when their
   // corresponding chapter is opened for the first time.
 
 </script>
@@ -2415,16 +2988,16 @@
   function loadChapterData(id) {
     if (id === 'weather' && !sectionLoadState.weather) {
       sectionLoadState.weather = true;
-      loadWeather().catch(() => {
-        // Allow a later retry if the first request fails.
+      Promise.all([loadWeather(), loadSunriseSunset()]).catch(() => {
+        // Allow a later retry if either request fails.
         sectionLoadState.weather = false;
       });
     }
 
     if (id === 'tides' && !sectionLoadState.tides) {
       sectionLoadState.tides = true;
-      Promise.all([loadTides(), loadSunriseSunset()]).catch(() => {
-        // Allow a later retry if either request fails.
+      loadTides().catch(() => {
+        // Allow a later retry if the first request fails.
         sectionLoadState.tides = false;
       });
     }
